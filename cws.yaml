@@ -320,6 +320,8 @@ paths:
             type: integer
           required: true
           description: The UID of the Work Order
+
+
       responses:
         '200':
           description: A successful operation
@@ -693,7 +695,6 @@ paths:
           schema:
               type: string
               enum: [all, queue, create]
-          default: all
           description: |
             **all** = If it is possible to create it in real-time a 201 response is returned, otherwise it is queued and a 202 response is returned.
             
@@ -785,6 +786,11 @@ paths:
             type: integer
           required: true
           description: The UID of the Work Order Group
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: The name to filter by
       responses:
         '200':
           description: A successful operation
@@ -914,8 +920,67 @@ paths:
                   type: string
                   description: The name of the Brand
                   example: "My Brand"
+                brandCost:
+                  type: number
+                  format: float
+                  description: The cost of the Brand
+                  example: 10
       responses:
         '201':
+          description: A successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the request was successful
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ProductBrandResponseSchema'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+  /groups/{groupId}/product-brands/{brandId}:
+    put:
+      summary: Update a Brand for a Work Order Group
+      tags:
+        - Work Order Groups
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: groupId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order Group
+        - in: path
+          name: brandId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Brand
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - brandCost
+              properties:
+                typeCost:
+                  type: number
+                  format: float
+                  description: The cost of the Brand
+                  example: 1.85
+      responses:
+        '200':
           description: A successful operation
           content:
             application/json:
@@ -977,6 +1042,7 @@ paths:
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
+
     post:
       summary: Create a new Type for a Work Order Group
       tags:
@@ -1002,6 +1068,11 @@ paths:
                   type: string
                   description: The name of the Type
                   example: "My Type"
+                typeCost:
+                  type: number
+                  format: float
+                  description: The cost of the Type
+                  example: 1.85
       responses:
         '201':
           description: A successful operation
@@ -1023,6 +1094,59 @@ paths:
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
+  /groups/{groupId}/product-types/{typeId}:
+    put:
+      summary: Update a Type for a Work Order Group
+      tags:
+        - Work Order Groups
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: groupId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order Group
+        - in: path
+          name: typeId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Type
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - typeCost
+              properties:
+                typeCost:
+                  type: number
+                  format: float
+                  description: The cost of the Type
+                  example: 1.85
+      responses:
+        '200':
+          description: A successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the request was successful
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ProductTypeResponseSchema'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
 
   /groups/{groupId}/product-models:
     get:
@@ -1039,10 +1163,10 @@ paths:
           required: true
           description: The UID of the Work Order Group
         - in: query
-          name: groupSchemeId
+          name: name
           schema:
             type: string
-          required: true
+          description: The name to filter by
       responses:
         '200':
           description: A successful operation
@@ -1959,22 +2083,22 @@ components:
         productId:
           type: string
           example: 'E7rApNKbg4'
-        productModelId:
+        modelId:
           type: string
           example: 'E7rApNKbg4'
-        productModelName:
+        modelName:
           type: string
           example: 'My Model'
-        productTypeId:
+        typeId:
           type: string
           example: 'E7rApNKbg4'
-        productTypeName:
+        typeName:
           type: string
           example: 'My Type'
-        productBrandId:
+        brandId:
           type: string
           example: 'E7rApNKbg4'
-        productBrandName:
+        brandName:
           type: string
           example: 'My Brand'
         fault:
