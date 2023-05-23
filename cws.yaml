@@ -449,6 +449,45 @@ paths:
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
   /wos/{woId}/logs/{logId}:
+    get:
+      summary: Get a log from a Work Order
+      tags:
+        - Work Order Logs
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: woId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order
+        - in: path
+          name: logId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Log
+      responses:
+        '200':
+          description: A successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the request was successful
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/LogResponseSchema'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
     delete:
       summary: Delete a log from a Work Order
       tags:
@@ -585,6 +624,46 @@ paths:
           $ref: '#/components/responses/ResponseMethodNotAllowed'
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
+    get:
+      summary: Get a part assigned to a Work Order
+      tags:
+        - Work Order Parts
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: woId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order
+        - in: path
+          name: partId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Part
+      responses:
+        '200':
+          description: A successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the request was successful
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/PartItemResponseSchema'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
+
 
 
 
@@ -666,6 +745,45 @@ paths:
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
   /wos/{woId}/charges/{chargeId}:
+    get:
+      summary: Get a charge assigned to a Work Order
+      tags:
+        - Work Order Charges
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: woId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order
+        - in: path
+          name: chargeId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Charge
+      responses:
+        '200':
+          description: A successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the request was successful
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ChargeResponseSchema'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
     delete:
       summary: Delete a charge from a Work Order
       tags:
@@ -715,8 +833,8 @@ paths:
         - in: query
           name: mode
           schema:
-              type: string
-              enum: [all, queue, create]
+            type: string
+            enum: [ all, queue, create ]
           description: |
             **all** = If it is possible to create it in real-time a 201 response is returned, otherwise it is queued and a 202 response is returned.
             
@@ -1601,7 +1719,7 @@ components:
                 example: true
 
     ResponseWoCreateSuccess:
-      description: | 
+      description: |
         Work Order accepted for creation success. 
         
         The information supplied is valid but a Work Order can't be created automatically in real-time because the product information supplied cannot be automaticaly matched to a product in the system.
@@ -1715,19 +1833,19 @@ components:
           example: '12345'
 
     AddressResponseSchema:
-        allOf:
-          - $ref: '#/components/schemas/AddressSchema'
-          - type: object
-            properties:
-              country:
-                type: string
-                example: 'Australia'
-              latitude:
-                type: number
-                example: '-27.4529'
-              longitude:
-                type: number
-                example: '153.031'
+      allOf:
+        - $ref: '#/components/schemas/AddressSchema'
+        - type: object
+          properties:
+            country:
+              type: string
+              example: 'Australia'
+            latitude:
+              type: number
+              example: '-27.4529'
+            longitude:
+              type: number
+              example: '153.031'
 
     ChargeSchema:
       type: object
@@ -2143,7 +2261,7 @@ components:
           type: string
           example: 'My Brand'
         fault:
-            $ref: '#/components/schemas/WoProductFaultSchema'
+          $ref: '#/components/schemas/WoProductFaultSchema'
 
     StatusSchema:
       type: object
@@ -2273,7 +2391,7 @@ components:
                 location:
                   $ref: '#/components/schemas/ContactResponseSchema'
             product:
-                $ref: '#/components/schemas/ProductResponseSchema'
+              $ref: '#/components/schemas/ProductResponseSchema'
 
 
 
