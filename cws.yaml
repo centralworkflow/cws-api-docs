@@ -366,11 +366,22 @@ paths:
             schema:
               type: object
               required:
-                - status
+                - statusId
+                - statusType
               properties:
                 statusId:
                   type: string
                   example: E7rApNKbg4
+
+              statusType:
+                type: string
+                description: The status Type
+                example: "Open"
+                enum:
+                  - Open
+                  - Closed
+                  - Cancelled
+                  - Invoiced
       responses:
         '200':
           $ref: '#/components/responses/ResponseWoCreateSuccess'
@@ -1572,13 +1583,20 @@ paths:
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
-  /alt-wo-1:
+  /groups/{groupId}/alt-wo-1:
     post:
       tags:
         - Other
       summary: Create a new Work Order using alt payload 1
       security:
         - Bearer: [ ]
+      parameters:
+        - in: path
+          name: groupId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order Group
       requestBody:
         required: true
         content:
@@ -1596,7 +1614,6 @@ paths:
                     Case:
                       type: object
                       required:
-                        - Id
                         - ProductDescription
                         - ProductGroup
                         - ProductBrand
@@ -1613,8 +1630,6 @@ paths:
                         - DateofPurchase
                         - FaultCode
                       properties:
-                        Id:
-                          type: integer
                         ProductDescription:
                           type: string
                         ProductGroup:
@@ -1655,6 +1670,132 @@ paths:
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
+  /groups/{groupId}/alt-wo-2:
+    post:
+      tags:
+        - Other
+      summary: Create a new Work Order using alt payload 2
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: groupId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order Group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - referenceId
+                - claimNumber
+                - problemDescription
+                - customer
+                - product
+              properties:
+                referenceId:
+                  type: string
+                  format: uuid
+                  example: 78cb00c2-f563-487a-a060-ee52dbe329f4
+                claimNumber:
+                  type: string
+                  example: 2331566
+                problemDescription:
+                  type: string
+                  example: Ice maker is no longer making ice and has frozen over.
+                customer:
+                  type: object
+                  required: true
+                  properties:
+                    name:
+                      type: object
+                      required:
+                        - firstName
+                        - lastName
+                      properties:
+                        firstName:
+                          type: string
+                          example: John
+                        lastName:
+                          type: string
+                          example: Smith
+                    address:
+                      type: object
+                      required:
+                        - line1
+                        - postalCode
+                      properties:
+                        line1:
+                          type: string
+                          example: 70 Example Street
+                        city:
+                          type: string
+                          example: Coolamon
+                        region:
+                          type: string
+                          example: NSW
+                        postalCode:
+                          type: string
+                          example: 2071
+                    contacts:
+                      type: array
+                      items:
+                        type: object
+                        required:
+                          - value
+                        properties:
+                          contactType:
+                            type: string
+                            example: Email
+                          value:
+                            type: string
+                            example: fake@email.com
+                product:
+                  type: object
+                  required:
+                    - make
+                    - model
+                    - serialNumber
+                    - purchaseDate
+                    - retailer
+                  properties:
+                    make:
+                      type: string
+                      example: SAMSUNG
+                    model:
+                      type: string
+                      example: SRF644CDLS
+                    description:
+                      type: string
+                      example: 647l L/STEEL FRENCH DOOR
+                    serialNumber:
+                      type: string
+                      example: K4545565
+                    purchaseDate:
+                      type: string
+                      example: 01/01/2023
+                    retailer:
+                      type: string
+                      example: Harvey Norman
+                notes:
+                  type: string
+                  example: Need this refrigerator assessed for qualified coverage.
+
+      responses:
+        '201':
+          $ref: '#/components/responses/ResponseWoSuccess'
+        '202':
+          $ref: '#/components/responses/ResponseWoCreateSuccess'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
 #----------------------------------------------------------------------------------------------------------------------- Components
 components:
 
@@ -1722,9 +1863,9 @@ components:
       description: |
         Work Order accepted for creation success. 
         
-        The information supplied is valid but a Work Order can't be created automatically in real-time because the product information supplied cannot be automaticaly matched to a product in the system.
+        The information supplied is valid but a Work Order can't be created automatically in real-time because the product information supplied cannot be automaticaly matched to the information in the system.
         
-        The workorder has been put into a queue for manual processing.
+        The workorder has been put into a queue for manual intervention.
       content:
         application/json:
           schema:
