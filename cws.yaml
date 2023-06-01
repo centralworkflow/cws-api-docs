@@ -30,6 +30,10 @@ tags:
     description: Work Order Charge operations. Charges are used to track the charges on a work order.
   - name: Work Order Groups
     description: Work Order Group operations. Groups are logical groupings of workorders, properties and rules.
+  - name: Work Order Group Products
+    description: Work Order Group Products operations.
+  - name: Work Order Groups Faults
+    description: Work Order Group Faults operations.
 
 paths:
 
@@ -607,34 +611,7 @@ paths:
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
   /wos/{woId}/parts/{partId}:
-    delete:
-      summary: Remove a part from a Work Order
-      tags:
-        - Work Order Parts
-      security:
-        - Bearer: [ ]
-      parameters:
-        - in: path
-          name: woId
-          schema:
-            type: integer
-          required: true
-          description: The UID of the Work Order
-        - in: path
-          name: partId
-          schema:
-            type: integer
-          required: true
-          description: The UID of the Part
-      responses:
-        '200':
-          $ref: '#/components/responses/ResponseSuccess'
-        '400':
-          $ref: '#/components/responses/ResponseErrorBadRequest'
-        '405':
-          $ref: '#/components/responses/ResponseMethodNotAllowed'
-        '401':
-          $ref: '#/components/responses/ResponseErrorUnauthorized'
+
     get:
       summary: Get a part assigned to a Work Order
       tags:
@@ -675,9 +652,34 @@ paths:
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
-
-
-
+    delete:
+      summary: Remove a part from a Work Order
+      tags:
+        - Work Order Parts
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: woId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order
+        - in: path
+          name: partId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Part
+      responses:
+        '200':
+          $ref: '#/components/responses/ResponseSuccess'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
 
   /wos/{woId}/charges:
     get:
@@ -827,49 +829,6 @@ paths:
   #----------------------------------------------------------------------------------------------------------------------- Work Order Group
 
   /groups/{groupId}/wos:
-    post:
-      summary: Create a new Work Order in a Work Order Group
-
-      tags:
-        - Work Order Groups
-      security:
-        - Bearer: [ ]
-      parameters:
-        - in: path
-          name: groupId
-          schema:
-            type: integer
-          required: true
-          description: The UID of the Group
-        - in: query
-          name: mode
-          schema:
-            type: string
-            enum: [ all, queue, create ]
-          description: |
-            **all** = If it is possible to create it in real-time a 201 response is returned, otherwise it is queued and a 202 response is returned.
-            
-            **queue** = The Work Order is queued and a 202 response is returned.
-            
-            **create** = The Work Order is created in real-time and a 201 response is returned. If it is not possible to create it in real-time a 400 response is returned.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WoPostSchema'
-      responses:
-        '201':
-          $ref: '#/components/responses/ResponseWoSuccess'
-        '202':
-          $ref: '#/components/responses/ResponseWoCreateSuccess'
-        '400':
-          $ref: '#/components/responses/ResponseErrorBadRequest'
-        '405':
-          $ref: '#/components/responses/ResponseMethodNotAllowed'
-        '401':
-          $ref: '#/components/responses/ResponseErrorUnauthorized'
-
     get:
       summary: Get a list of all Work Orders.
       tags:
@@ -923,6 +882,50 @@ paths:
           $ref: '#/components/responses/ResponseMethodNotAllowed'
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
+    post:
+      summary: Create a new Work Order in a Work Order Group
+
+      tags:
+        - Work Order Groups
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: groupId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Group
+        - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [ all, queue, create ]
+          description: |
+            **all** = If it is possible to create it in real-time a 201 response is returned, otherwise it is queued and a 202 response is returned.
+            
+            **queue** = The Work Order is queued and a 202 response is returned.
+            
+            **create** = The Work Order is created in real-time and a 201 response is returned. If it is not possible to create it in real-time a 400 response is returned.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WoPostSchema'
+      responses:
+        '201':
+          $ref: '#/components/responses/ResponseWoSuccess'
+        '202':
+          $ref: '#/components/responses/ResponseWoCreateSuccess'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+
   /groups/{groupId}/statuses:
     get:
       summary: Get a list of all available Statuses for a Work Order Group
@@ -1008,7 +1011,7 @@ paths:
     get:
       summary: Get a list of all available Brands for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       parameters:
@@ -1049,7 +1052,7 @@ paths:
     post:
       summary: Create a new Brand for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       parameters:
@@ -1101,7 +1104,7 @@ paths:
     put:
       summary: Update a Brand for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       parameters:
@@ -1155,7 +1158,7 @@ paths:
     get:
       summary: Get a list of all available Types for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       parameters:
@@ -1197,7 +1200,7 @@ paths:
     post:
       summary: Create a new Type for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       parameters:
@@ -1249,7 +1252,7 @@ paths:
     put:
       summary: Update a Type for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       parameters:
@@ -1303,7 +1306,7 @@ paths:
     get:
       summary: Get a list of all available Models for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       parameters:
@@ -1343,7 +1346,7 @@ paths:
     post:
       summary: Create a new Model
       tags:
-        - Work Order Groups
+        - Work Order Group Products
       security:
         - Bearer: [ ]
       requestBody:
@@ -1407,12 +1410,65 @@ paths:
         '401':
           $ref: '#/components/responses/ResponseErrorUnauthorized'
 
+  /groups/{groupId}/product-models/{modelId}:
+    put:
+      summary: Update a Product Model for a Work Order Group
+      tags:
+        - Work Order Group Products
+      security:
+        - Bearer: [ ]
+      parameters:
+        - in: path
+          name: groupId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Work Order Group
+        - in: path
+          name: modelId
+          schema:
+            type: integer
+          required: true
+          description: The UID of the Model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - modelCost
+              properties:
+                modelCost:
+                  type: number
+                  format: float
+                  description: The cost of the Model
+                  example: 1.85
+      responses:
+        '200':
+          description: A successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the request was successful
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ProductModelResponseSchema'
+        '400':
+          $ref: '#/components/responses/ResponseErrorBadRequest'
+        '405':
+          $ref: '#/components/responses/ResponseMethodNotAllowed'
+        '401':
+          $ref: '#/components/responses/ResponseErrorUnauthorized'
 
   /groups/{groupId}/fault-area-symptoms:
     get:
       summary: Get a list of all available Fault Symptom for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Groups Faults
       security:
         - Bearer: [ ]
       parameters:
@@ -1448,7 +1504,7 @@ paths:
     post:
       summary: Create a new Fault Symptom for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Groups Faults
       security:
         - Bearer: [ ]
       parameters:
@@ -1502,7 +1558,7 @@ paths:
     get:
       summary: Get a list of all available Fault Actions for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Groups Faults
       security:
         - Bearer: [ ]
       parameters:
@@ -1538,7 +1594,7 @@ paths:
     post:
       summary: Create a new Fault Action for a Work Order Group
       tags:
-        - Work Order Groups
+        - Work Order Groups Faults
       security:
         - Bearer: [ ]
       parameters:
