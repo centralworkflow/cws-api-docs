@@ -1752,7 +1752,16 @@ paths:
                 - problemDescription
                 - customer
                 - product
+                - authAmount
+                - fulfillmentMethod
               properties:
+                authAmount:
+                  type: number
+                  format: float
+                  example: 100.00
+                fulfillmentMethod:
+                  type: string
+                  example: "Assessment"
                 referenceId:
                   type: string
                   format: uuid
