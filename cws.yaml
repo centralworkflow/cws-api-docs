@@ -9,9 +9,9 @@ info:
     email: systems@linktechnology.net
 
 servers:
-  - url: https://{systemId}.cws.app/api/
+  - url: https://{systemId}.cws.app/api/v1/
     description: Production Server
-  - url: https://{systemId}-trial.cws.app/api/
+  - url: https://{systemId}-trial.cws.app/api/v1/
     description: Test Server
 tags:
   - name: Auth
