@@ -2152,10 +2152,6 @@ components:
                   properties:
                       address:
                           $ref: '#/components/schemas/AddressResponseSchema'
-                      contactId:
-                          type: string
-                          description: The UID of the contact
-                          example: E7rApNKbg4
 
         ErrorSchema:
             type: object
