@@ -1976,35 +1976,7 @@ components:
                                 description: Whether the request was successful
                                 example: true
                             data:
-                                $ref: '#/components/responses/ResponseWoListData'
-
-        ResponseWoListData:
-            type: object
-            properties:
-                totalCount:
-                    type: integer
-                    description: The total number of results, ignoring the limit
-                    example: 100
-                totalPages:
-                    type: integer
-                    description: The total number of pages
-                    example: 5
-                pageSize:
-                    type: integer
-                    description: The number of results per page
-                    example: 20
-                currentPage:
-                    type: integer
-                    description: The current page
-                    example: 1
-                resutlsCount:
-                    type: integer
-                    description: The current page
-                    example: 1
-                results:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/WoResponseSchema'
+                                $ref: '#/components/schemas/WoListResponseSchema'
 
         ResponseErrorBadRequest:
             description: The request is malformed and needs to be fixed
@@ -2583,6 +2555,33 @@ components:
                               fault:
                                   $ref: '#/components/schemas/WoProductFaultSchema'
 
+        WoListResponseSchema:
+            type: object
+            properties:
+                totalCount:
+                    type: integer
+                    description: The total number of results, ignoring the limit
+                    example: 100
+                totalPages:
+                    type: integer
+                    description: The total number of pages
+                    example: 5
+                pageSize:
+                    type: integer
+                    description: The number of results per page
+                    example: 20
+                currentPage:
+                    type: integer
+                    description: The current page
+                    example: 1
+                resutlsCount:
+                    type: integer
+                    description: The current page
+                    example: 1
+                results:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/WoResponseSchema'
         WoResponseSchema:
             allOf:
                 - $ref: '#/components/schemas/WoSchema'
