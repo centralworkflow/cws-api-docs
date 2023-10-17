@@ -259,6 +259,22 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+    /wo-stats:
+        get:
+            summary: Get a list of all Work Order Statistics.
+            tags:
+                - Work Orders
+            security:
+                - Bearer: []
+            responses:
+                '200':
+                    $ref: '#/components/responses/ResponseWoStatsSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
     /wos/{woId}:
         get:
             summary: Get a Work Order by UID
@@ -1977,6 +1993,19 @@ components:
                                 example: true
                             data:
                                 $ref: '#/components/schemas/WoListResponseSchema'
+        ResponseWoStatsSuccess:
+            description: Wos Stats response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: true
+                            data:
+                                $ref: '#/components/schemas/WoStatsResponseSchema'
 
         ResponseErrorBadRequest:
             description: The request is malformed and needs to be fixed
@@ -2614,3 +2643,42 @@ components:
                                   $ref: '#/components/schemas/ContactResponseSchema'
                       product:
                           $ref: '#/components/schemas/ProductResponseSchema'
+        WoStatsResponseSchema:
+            type: object
+            properties:
+                totalCount:
+                    type: number
+                    description: The total number of Work Orders
+                    example: 100
+                firstUpdatedAt:
+                    type: string
+                    description: ISO-8601 date - The date of the first Work Order
+                    example: 2022-04-10T14:30:00+02:00
+                firstCreatedAt:
+                    type: string
+                    description: ISO-8601 date - The date of the first Work Order
+                    example: 2022-04-10T14:30:00+02:00
+                firstWoId:
+                    type: string
+                    description: The UID of the first Work Order
+                    example: Bqdmioqjlg
+                firstWoNum:
+                    type: number
+                    description: The number of the first Work Order
+                    example: 1
+                lastUpdatedAt:
+                    type: string
+                    description: ISO-8601 date - The date of the last Work Order
+                    example: 2022-04-10T14:30:00+02:00
+                lastCreatedAt:
+                    type: string
+                    description: ISO-8601 date - The date of the last Work Order
+                    example: 2022-04-10T14:30:00+02:00
+                lastWoId:
+                    type: string
+                    description: The UID of the last Work Order
+                    example: Bqdmioqjlg
+                lastWoNum:
+                    type: number
+                    description: The number of the last Work Order
+                    example: 100
