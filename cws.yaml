@@ -2623,6 +2623,14 @@ components:
                       uid:
                           type: string
                           example: 'E7rApNKbg4'
+                      createdAt:
+                          type: string
+                          description: ISO-8601 date - The date the Work Order was created
+                          example: '2021-04-10T14:30:00+02:00'
+                      updatedAt:
+                          type: string
+                          description: ISO-8601 date - The date the Work Order was updated
+                          example: '2021-04-10T14:30:00+02:00'
                       thirdpartyRef:
                           type: string
                           example: 'mythirdpartyref'
