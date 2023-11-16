@@ -246,10 +246,11 @@ paths:
                       type: string
                   description: A reference number to filter by
                 - in: query
-                  name: onlyMeta
+                  name: ids
                   schema:
-                      type: boolean
-                  description: Whether to skip the results and only return the meta information
+                      type: string
+                  example: E7rApNKbg4,Z7rApNKbg4,T7rApNKbg4
+                  description: Specific Work Order IDs to filter the results by
             responses:
                 '200':
                     $ref: '#/components/responses/ResponseWoListSuccess'
@@ -2122,6 +2123,8 @@ components:
 
         ContactSchema:
             type: object
+            required:
+                - id
             properties:
                 id:
                     type: string
@@ -2269,7 +2272,7 @@ components:
                           type: integer
                           description: The Log UID
                           example: E7rApNKbg4
-                      logCreated:
+                      logCreatedAt:
                           type: string
                           description: The date the log was created
                           example: '2021-04-10T14:30:00+02:00'
@@ -2432,9 +2435,9 @@ components:
                     type: string
                     example: 'abc123'
                 productPurchasedAt:
-                    format: date
-                    description: full-date notation as defined by RFC 3339, section 5.6, for example, 2017-07-21
-                    example: 2022-04-10
+                    type: string
+                    description: ISO-8601 date - The date of the purchase
+                    example: 2022-04-10T14:30:00+02:00
                 fault:
                     $ref: '#/components/schemas/WoProductFaultSchema'
 
@@ -2486,6 +2489,34 @@ components:
                     example: 'My Brand'
                 fault:
                     $ref: '#/components/schemas/WoProductFaultSchema'
+
+        FileResponseSchema:
+            type: object
+            properties:
+                fileId:
+                    type: string
+                    description: The UID of the file
+                    example: 'E7rApNKbg4'
+                fileName:
+                    type: string
+                    description: The name of the file
+                    example: 'thefile'
+                fileUrl:
+                    type: string
+                    description: The url of the file
+                    example: 'https://cws.app/files/filename.jpg'
+                fileSize:
+                    type: number
+                    description: Size in bytes
+                    example: '10303'
+                fileMime:
+                    type: string
+                    description: The mime type of the file
+                    example: 'image/jpeg'
+                fileCreatedAt:
+                    type: string
+                    description: ISO-8601 date - The date of creation
+                    example: 2022-04-10T14:30:00+02:00
 
         StatusSchema:
             type: object
@@ -2615,6 +2646,11 @@ components:
             allOf:
                 - $ref: '#/components/schemas/WoSchema'
                 - type: object
+                  required:
+                      - id
+                      - uid
+                      - createdAt
+                      - updatedAt
                   properties:
                       id:
                           type: integer
@@ -2651,6 +2687,10 @@ components:
                                   $ref: '#/components/schemas/ContactResponseSchema'
                       product:
                           $ref: '#/components/schemas/ProductResponseSchema'
+                      files:
+                          type: array
+                          items:
+                              $ref: '#/components/schemas/FileResponseSchema'
         WoStatsResponseSchema:
             type: object
             properties:
