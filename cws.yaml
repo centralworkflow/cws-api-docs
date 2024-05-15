@@ -34,7 +34,14 @@ tags:
       description: Work Order Group Products operations.
     - name: Work Order Groups Faults
       description: Work Order Group Faults operations.
+    - name: Inventory Supplier Items
+      description: Alpha Preview - Inventory Item operations.
+    - name: Inventory Supplier Purchase Orders
+      description: Pre-Alpha Preview 
+    - name: Inventory Supplier Orders
+      description: Alpha Preview - Inventory Order operations.
 
+    
 paths:
     #----------------------------------------------------------------------------------------------------------------------- Auth
 
@@ -396,15 +403,15 @@ paths:
                                     type: string
                                     example: E7rApNKbg4
 
-                            statusType:
-                                type: string
-                                description: The status Type
-                                example: 'Open'
-                                enum:
-                                    - Open
-                                    - Closed
-                                    - Cancelled
-                                    - Invoiced
+                                statusType:
+                                    type: string
+                                    description: The status Type
+                                    example: 'Open'
+                                    enum:
+                                        - Open
+                                        - Closed
+                                        - Cancelled
+                                        - Invoiced
             responses:
                 '200':
                     $ref: '#/components/responses/ResponseWoCreateSuccess'
@@ -1801,7 +1808,10 @@ paths:
                                     example: Ice maker is no longer making ice and has frozen over.
                                 customer:
                                     type: object
-                                    required: true
+                                    required: 
+                                        - name
+                                        - address
+                                        - contacts
                                     properties:
                                         name:
                                             type: object
@@ -1888,6 +1898,319 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+
+    #----------------------------------------------------------------------------------------------------------------------- Inventory Supplier Purchase Orders
+
+    /inventory/suppliers/{supplierId}/purchase-orders:
+        post:
+            summary: Create a new Purchase Order
+            x-beta: true
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Purchase Orders
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryPurchaseOrderPostSchema'
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryPurchaseOrderSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        get:
+            summary: Get a list of all Purchase Orders
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Purchase Orders
+            parameters:
+                - in: query
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+            responses:
+                '200': 
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/InventoryPurchaseOrderGetSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        
+    /inventory/suppliers/{supplierId}/purchase-orders/{purchaseOrderId}:
+        patch:
+            summary: Update a Purchase Order
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Purchase Orders
+            
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryPurchaseOrderPatchSchema'
+            
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryPurchaseOrderSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        get:
+            summary: Get a Purchase Order
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Purchase Orders
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryPurchaseOrderSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        
+
+    #----------------------------------------------------------------------------------------------------------------------- Inventory Supplier Orders
+
+    /inventory/suppliers/{supplierId}/orders:
+        post:
+            summary: Create a new Order
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Orders
+            parameters:
+                - in: query
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryOrderPostSchema'
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryOrderSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        get:
+            summary: Get a list of all Orders
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Orders
+            parameters:
+                - in: query
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+            responses:
+                '200': 
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: array
+                                        items: 
+                                            $ref: '#/components/schemas/InventoryOrderGetSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        
+    /inventory/suppliers/{supplierId}/orders/{orderId}:
+        patch:
+            summary: Update an Order
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Orders
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryOrderPatchSchema'
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryOrderSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        get:
+            summary: Get an Order
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Orders
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryOrderSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+
+        
+
+    #----------------------------------------------------------------------------------------------------------------------- Inventory Catalog
+
+    /inventory/suppliers/{supplierId}/items:
+        post:
+            summary: Create a new Item
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Items
+            
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryItemPostSchema'
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryItemSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+        get:
+            summary: Get a list of all Items
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Items
+            parameters:
+                - in: query
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+
+            responses:
+                '200': 
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/InventoryItemGetSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+    /inventory/suppliers/{supplierId}/items/{itemId}:
+        patch:
+            summary: Update an Item
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Items
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryItemPatchSchema'
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryItemSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+        get:
+            summary: Get an Item
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Items
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryItemSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+
 #----------------------------------------------------------------------------------------------------------------------- Components
 components:
     securitySchemes:
@@ -1914,27 +2237,57 @@ components:
                                 example: true
                             data:
                                 type: object
+                                required:
+                                    - userId
+                                    - username
+                                    - name
+                                    - email
+                                    - authConfig
+                                    - authConfig.accessToken
+                                    - authConfig.accessExpiresAt
+                                    - authConfig.refreshToken
+                                    - authConfig.refreshExpiresAt
+                                    - permissions
                                 properties:
-                                    success:
-                                        type: boolean
-                                        description: Whether the request was successful
-                                        example: true
-                                    accessToken:
+                                    userId:
                                         type: string
-                                        description: Your new token
-                                        example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
-                                    accessExpiresAt:
+                                        description: The user UID
+                                        example: E7rApNKbg4
+                                    username:
                                         type: string
-                                        description: ISO-8601 date - When the token will expire
-                                        example: 2022-04-10T14:30:00+02:00
-                                    refreshToken:
+                                        description: The username
+                                        example: 'myusername'
+                                    name:
                                         type: string
-                                        description: Your new token
-                                        example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
-                                    refreshExpiresAt:
+                                        description: The user's name
+                                        example: 'John Smith'
+                                    email:
                                         type: string
-                                        description: ISO-8601 date -  When the token will expire
-                                        example: 2022-04-10T14:30:00+02:00
+                                        description: The user's email
+                                        example: 'john@smith.com'
+                                    permissions:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/PermissionResponseSchema'
+                                    authConfig:
+                                        type: object
+                                        properties:
+                                            accessToken:
+                                                type: string
+                                                description: Your new token
+                                                example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
+                                            accessExpiresAt:
+                                                type: string
+                                                description: ISO-8601 date - When the token will expire
+                                                example: 2022-04-10T14:30:00+02:00
+                                            refreshToken:
+                                                type: string
+                                                description: Your new token
+                                                example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
+                                            refreshExpiresAt:
+                                                type: string
+                                                description: ISO-8601 date -  When the token will expire
+                                                example: 2022-04-10T14:30:00+02:00
 
         ResponseSuccess:
             description: A successful operation
@@ -2029,6 +2382,49 @@ components:
                     schema:
                         $ref: '#/components/schemas/ErrorSchema'
 
+        ResponseInventoryOrderSuccess:
+            description: A successful Inventory Order operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: true
+                            data:
+                                $ref: '#/components/schemas/InventoryOrderGetSchema'
+
+        ResponseInventoryPurchaseOrderSuccess:
+            description: A successful Inventory Purchase Order operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: true
+                            data:
+                                $ref: '#/components/schemas/InventoryPurchaseOrderPostSchema'
+
+        ResponseInventoryItemSuccess:
+            description: A successful Inventory Item operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: true
+                            data:
+                                $ref: '#/components/schemas/InventoryItemGetSchema'
+
+
     schemas:
         AddressSchema:
             type: object
@@ -2120,15 +2516,9 @@ components:
                           type: string
                           description: The UID of the charge charge
                           example: E7rApNKbg4
-
-        ContactSchema:
+        ContactPostSchema:
             type: object
-            required:
-                - id
             properties:
-                id:
-                    type: string
-                    example: 'E7rApNKbg4'
                 name:
                     type: string
                     example: 'John Smith'
@@ -2150,9 +2540,18 @@ components:
                     type: string
                     example: 'email1@email.com'
 
+        ContactGetSchema:
+            allOf:
+                - $ref: '#/components/schemas/ContactPostSchema'
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          example: 'E7rApNKbg4'
+
         ContactResponseSchema:
             allOf:
-                - $ref: '#/components/schemas/ContactSchema'
+                - $ref: '#/components/schemas/ContactGetSchema'
                 - type: object
                   required:
                       - name
@@ -2267,11 +2666,19 @@ components:
             allOf:
                 - $ref: '#/components/schemas/LogSchema'
                 - type: object
+                  required:
+                      - logId
+                      - logCreatedAt
+                      - logCreatedBy
                   properties:
                       logId:
-                          type: integer
+                          type: string
                           description: The Log UID
                           example: E7rApNKbg4
+                      logIsSystem:
+                          type: boolean
+                          description: Whether the log was created by the system
+                          example: false
                       logCreatedAt:
                           type: string
                           description: The date the log was created
@@ -2413,6 +2820,34 @@ components:
                     description: The Model Cost
                     example: 100
 
+        InstallProductResponseSchema:
+            type: object
+            required:
+                - installProductId
+                - installProductName
+                - installProductDescription
+                - installProductQuantity
+            properties:
+                installProductId:
+                    type: string
+                    description: The UID of the install product
+                    example: E7rApNKbg4
+                installProductName:
+                    type: string
+                    example: 'MODEL123'
+                installProductDescription:
+                    type: string
+                    example: 'My Product Description'
+                installProductQuantity:
+                    type: number
+                    example: 1
+                installProductWeight:
+                    type: number
+                    example: 1.5
+                installProductVolume:
+                    type: number
+                    example: 1.5
+
         ProductSchema:
             type: object
             description: |
@@ -2465,6 +2900,14 @@ components:
 
         ProductResponseSchema:
             type: object
+            required:
+                - productId
+                - modelId
+                - modelName
+                - typeId
+                - typeName
+                - brandId
+                - brandName
             properties:
                 productId:
                     type: string
@@ -2490,8 +2933,58 @@ components:
                 fault:
                     $ref: '#/components/schemas/WoProductFaultSchema'
 
+        EventResponseSchema:
+            type: object
+            required:
+                - eventId
+                - eventStartAt
+                - eventEndAt
+                - eventSubject
+                - eventType
+                - eventUserId
+            properties:
+                eventId:
+                    type: string
+                    description: the uid of the event
+                    example: E7rApNKbg4
+                eventStartAt:
+                    type: string
+                    description: ISO-8601 date - The date of the event
+                    example: 2022-04-10T14:30:00+02:00
+                eventEndAt:
+                    type: string
+                    description: ISO-8601 date - The date of the event
+                    example: 2022-04-10T14:30:00+02:00
+                eventSubject:
+                    type: string
+                    description: the subject of the event
+                    example: 'My Event'
+                eventType:
+                    type: string
+                    description: the type of the event
+                    example: 'My Event Type'
+                eventUserId:
+                    type: string
+                    description: the uid of the user who created the event
+                    example: E7rApNKbg4
+                eventCompletedAt:
+                    type: string
+                    description: ISO-8601 date - The date of the event
+                    example: 2022-04-10T14:30:00+02:00
+                eventDescription:
+                    type: string
+                    description: the description of the event
+                    example: 'My Event Description'
+
         FileResponseSchema:
             type: object
+            required:
+                - fileId
+                - fileName
+                - fileUrl
+                - fileSize
+                - fileMime
+                - fileCreatedAt
             properties:
                 fileId:
                     type: string
@@ -2520,11 +3013,14 @@ components:
 
         StatusSchema:
             type: object
+            required:
+                - name
+                - type
             properties:
-                statusName:
+                name:
                     type: string
                     example: 'My Status'
-                statusType:
+                type:
                     type: string
                     description: The status Type
                     example: 'Open'
@@ -2533,15 +3029,378 @@ components:
                         - Closed
                         - Cancelled
                         - Invoiced
+                        - Estimate
+                        - On Hold
 
         StatusResponseSchema:
             allOf:
                 - $ref: '#/components/schemas/StatusSchema'
                 - type: object
+                  required:
+                      - id
                   properties:
-                      statusId:
+                      id:
                           type: string
                           example: 'E7rApNKbg4'
+
+        #----------------------------------------------------------------------------------------------------------------------- Inventory Purchase Order
+
+        InventoryPurchaseOrderPostSchema:
+            type: object
+            required: 
+                - supplierId
+            properties:
+                type:
+                    type: string
+                    default: new_order
+                    enum: [new_order, replenishment, mixed]
+                    description: The type of the purchase order
+                supplierId:
+                    type: string
+                    description: The UID of the Supplier
+                warehouseId:
+                    type: string
+                    description: The UID of the Warehouse.  
+                factoryId:
+                    type: string
+                    description: The UID of the Factory
+                ident:
+                    type: string
+                    description: The unique ident of the order. 
+                containerRef:
+                    type: string
+                    description: The reference number of the container
+                trackingRef:
+                    type: string
+                    description: The reference number of the tracking
+                otherRef:
+                    type: string
+                    description: Any other reference number
+                publicNotes:
+                    type: string
+                    description: Public notes
+                privateNotes:
+                    type: string
+                    description: Private notes
+                destinationPort:
+                    type: string
+                    description: The destination port
+                departAt:
+                    type: string
+                    description: ISO-8601 date -  Estimated Depature
+                    example: 2022-04-10T14:30:00+02:00
+                arriveAt:
+                    type: string
+                    description: ISO-8601 date -  Esitmated Arrival
+                    example: 2022-04-10T14:30:00+02:00
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/InventoryPurchaseOrderItemPostSchema'
+                        
+        InventoryPurchaseOrderGetSchema:
+            allOf:
+                - $ref: '#/components/schemas/InventoryPurchaseOrderPostSchema'
+                - type: object
+                  properties:
+                    purchaseOrderId:
+                        type: string
+                        description: The UID of the Purchase Order
+                    status:
+                        type: string
+                        enum: [pending, awaiting_shipment, left_factory, stock_received]
+                    possibleNextStatus:
+                        type: string
+                        enum: [pending, awaiting_shipment, left_factory, stock_received]
+                    items:
+                        type: array
+                        items:
+                            $ref: '#/components/schemas/InventoryPurchaseOrderItemGetSchema'
+                    createdAt:
+                        type: string
+                        description: ISO-8601 date - The date of creation
+                        example: 2022-04-10T14:30:00+02:00
+
+        InventoryPurchaseOrderPatchSchema:
+            type: object
+            properties:
+                status:
+                    type: string
+                    description: The status of the order
+                    enum: [pending, awaiting_shipment, left_factory, stock_received]
+                containerRef:
+                    type: string
+                    description: The reference number of the container
+                trackingRef:
+                    type: string
+                    description: The reference number of the tracking
+                otherRef:
+                    type: string
+                    description: Any other reference number
+                publicNotes:
+                    type: string
+                    description: Public notes
+                privateNotes:
+                    type: string
+                    description: Private notes
+                destinationPort:
+                    type: string
+                    description: The destination port
+                departAt:
+                    type: string
+                    description: ISO-8601 date -  Estimated Depature
+                    example: 2022-04-10T14:30:00+02:00
+                arriveAt:
+                    type: string
+                    description: ISO-8601 date -  Esitmated Arrival
+                    example: 2022-04-10T14:30:00+02:00
+
+        #----------------------------------------------------------------------------------------------------------------------- Inventory Order
+
+        InventoryOrderPostSchema:
+            type: object
+            required:
+                - supplierId
+                - ref
+                - sender
+                - recipient
+            properties:
+                warehouseId:
+                    type: string
+                    description: The UID of the Warehouse
+                supplierId:
+                    type: string
+                    description: The UID of the Supplier
+                factoryId:
+                    type: string
+                    description: The UID of the Factory
+                ref:
+                    type: string
+                    description: The reference number of the order
+                sender:
+                    $ref: '#/components/schemas/ContactPostSchema'
+                recipient:
+                    $ref: '#/components/schemas/ContactGetSchema'
+                shippingNote:
+                    type: string
+                    description: A shipping note
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/InventoryItemPostSchema'
+                        
+
+        InventoryOrderGetSchema:
+            allOf:
+                - $ref: '#/components/schemas/InventoryOrderPostSchema'
+                - type: object
+                  properties:
+                    orderId:
+                        type: string
+                        description: The UID of the Order
+                    status:
+                        type: string
+                        enum: [open, dispatch_ready, pickup_booked, dispatched, complete, cancelled]
+                    possibleNextStatus:
+                        type: string
+                        enum: [open, dispatch_ready, cancelled]
+                    createdAt:
+                        type: string
+                        description: ISO-8601 date - The date of creation
+                        example: 2022-04-10T14:30:00+02:00
+                    items:
+                        type: array
+                        items:
+                            $ref: '#/components/schemas/InventoryItemGetSchema'
+                    shipments:
+                        type: array
+                        items:
+                            $ref: '#/components/schemas/InventoryShipmentGetSchema'
+        
+        InventoryOrderPatchSchema:
+            type: object
+            properties:
+                status: 
+                    type: string
+                    description: The status of the order
+                    enum: [open, dispatch_ready, cancelled]
+                ref:
+                    type: string
+                    description: The reference number of the order
+                sender:
+                    $ref: '#/components/schemas/ContactGetSchema'
+                recipient:
+                    $ref: '#/components/schemas/ContactGetSchema'
+                shippingNote:
+                    type: string
+                    description: A shipping note
+
+        #----------------------------------------------------------------------------------------------------------------------- Inventory Order Shipment
+        
+        InventoryShipmentGetSchema:
+            type: object
+            properties:
+                InventoryShipmentId:
+                    type: string
+                    description: The UID of the Shipment
+                warehouseId:
+                    type: string
+                    description: The UID of the Warehouse
+                status:
+                    type: string
+                    enum: [open, pickup_booked, dispatched, complete, cancelled]
+                possibleNextStatus:
+                    type: string
+                    enum: [open, pickup_booked, dispatched, complete, cancelled]
+                sender:
+                    $ref: '#/components/schemas/ContactGetSchema'
+                recipient:
+                    $ref: '#/components/schemas/ContactGetSchema'
+                ref:
+                    type: string
+                    description: The reference number of the shipment
+                courier:
+                    type: string
+                    description: The courier of the shipment
+                trackingNumber:
+                    type: string
+                    description: The tracking number of the shipment
+                trackingUrl:
+                    type: string
+                    description: The tracking url of the shipment
+                descrip:
+                    type: string
+                    description: The description of the shipment
+                createdAt:
+                    type: string
+                    description: ISO-8601 date - The date of creation
+                    example: 2022-04-10T14:30:00+02:00
+                dispatchAt:
+                    type: string
+                    description: ISO-8601 date - The date of creation
+                    example: 2022-04-10T14:30:00+02:00
+                    
+
+
+
+        #----------------------------------------------------------------------------------------------------------------------- Inventory Item
+        
+        InventoryItemPostSchema:
+            type: object
+            required: 
+                - supplierId
+                - ident
+                - descrip
+            properties:
+                warehouseId:
+                    type: string
+                    description: The UID of the Warehouse
+                supplierId:
+                    type: string
+                    description: The UID of the Supplier
+                ident:
+                    type: string
+                    description: The ident of the item
+                factoryRef:
+                    type: string
+                    description: The factory ident of the item
+                thirdpartyRef:
+                    type: string
+                    description: The thirdparty ident of the item
+                descrip:
+                    type: string
+                    description: The description of the item
+                barcode:
+                    type: string
+                    description: The barcode of the item
+                qtyStock:
+                    type: integer
+                    description: The quantity of the item in stock
+                    default: 0
+                    example: 1
+        
+        InventoryItemGetSchema:
+            allOf:
+                - $ref: '#/components/schemas/InventoryItemPostSchema'
+                - type: object
+                  properties:
+                      itemId:
+                          type: string
+                          description: The UID of the Item
+        
+        InventoryItemPatchSchema:
+            type: object
+            properties:
+                factoryIdent:
+                    type: string
+                    description: The factory ident of the item
+                thirdpartyIdent:
+                    type: string
+                    description: The thirdparty ident of the item
+                descrip:
+                    type: string
+                    description: The description of the item
+                barcode:
+                    type: string
+                    description: The barcode of the item
+                qtyStock:
+                    type: integer
+                    description: The quantity of the item in stock
+                    default: 0
+                    example: 1
+        
+
+        #----------------------------------------------------------------------------------------------------------------------- Inventory Order Item
+
+        InventoryOrderItemGetSchema:
+            type: object
+            required:
+              - qty
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemGetSchema'
+        
+        InventoryOrderItemPostSchema:
+            type: object
+            required:
+              - qty
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemPostSchema'
+
+
+        InventoryPurchaseOrderItemGetSchema:
+            type: object
+            required:
+              - qty
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemGetSchema'
+
+        InventoryPurchaseOrderItemPostSchema:
+            type: object
+            required:
+              - qty
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemPostSchema'
+
 
         WoSchema:
             type: object
@@ -2552,12 +3411,21 @@ components:
                 delayRef:
                     type: string
                     example: 'mydelayref'
+                invoiceRef:
+                    type: string
+                    example: 'myinvoiceref'
                 raRef:
                     type: string
                     example: 'myraref'
                 raReason:
                     type: string
                     example: 'myrareason'
+                productRef:
+                    type: string
+                    example: 'myproductref'
+                stockRef:
+                    type: string
+                    example: 'mystockref'
                 descrip:
                     type: string
                     example: 'mydescrip'
@@ -2584,7 +3452,7 @@ components:
                               - customer
                           properties:
                               customer:
-                                  $ref: '#/components/schemas/ContactSchema'
+                                  $ref: '#/components/schemas/ContactGetSchema'
 
         WoPatchSchema:
             type: object
@@ -2649,6 +3517,7 @@ components:
                   required:
                       - id
                       - uid
+                      - status
                       - createdAt
                       - updatedAt
                   properties:
@@ -2677,6 +3546,9 @@ components:
                           $ref: '#/components/schemas/StatusResponseSchema'
                       contacts:
                           type: object
+                          required:
+                                - customer
+                                - location
                           properties:
                               customer:
                                   $ref: '#/components/schemas/ContactResponseSchema'
@@ -2687,10 +3559,22 @@ components:
                                   $ref: '#/components/schemas/ContactResponseSchema'
                       product:
                           $ref: '#/components/schemas/ProductResponseSchema'
+                      installProducts:
+                          type: array
+                          items:
+                              $ref: '#/components/schemas/InstallProductResponseSchema'
                       files:
                           type: array
                           items:
                               $ref: '#/components/schemas/FileResponseSchema'
+                      events:
+                          type: array
+                          items:
+                              $ref: '#/components/schemas/EventResponseSchema'
+                      logs:
+                          type: array
+                          items:
+                              $ref: '#/components/schemas/LogResponseSchema'
         WoStatsResponseSchema:
             type: object
             properties:
@@ -2698,13 +3582,9 @@ components:
                     type: number
                     description: The total number of Work Orders
                     example: 100
-                firstUpdatedAt:
+                lastChangeAt:
                     type: string
-                    description: ISO-8601 date - The date of the first Work Order
-                    example: 2022-04-10T14:30:00+02:00
-                firstCreatedAt:
-                    type: string
-                    description: ISO-8601 date - The date of the first Work Order
+                    description: ISO-8601 date - The date of the last change
                     example: 2022-04-10T14:30:00+02:00
                 firstWoId:
                     type: string
@@ -2714,14 +3594,6 @@ components:
                     type: number
                     description: The number of the first Work Order
                     example: 1
-                lastUpdatedAt:
-                    type: string
-                    description: ISO-8601 date - The date of the last Work Order
-                    example: 2022-04-10T14:30:00+02:00
-                lastCreatedAt:
-                    type: string
-                    description: ISO-8601 date - The date of the last Work Order
-                    example: 2022-04-10T14:30:00+02:00
                 lastWoId:
                     type: string
                     description: The UID of the last Work Order
