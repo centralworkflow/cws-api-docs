@@ -47,7 +47,16 @@ paths:
 
     /auth:
         post:
-            summary: Create a new Access Token from Username and Password
+            summary: Create a new Access Token from Username and Password. 
+            description: |
+                - This endpoint is used to create a new Access Token from a Username and Password.
+                - Only one Access Token can be requested each 10 minutes. 
+                - The Access Token is used to authenticate the user for all other endpoints. 
+                - The Access Token is valid for 1 day and can be refreshed for up to 90 days. 
+                - The Refresh Token is used to request a new Access Token without needing to re-enter the Username and Password. 
+                - The Refresh Token is valid for 90 days. 
+                
+                
             tags:
                 - Auth
             requestBody:
