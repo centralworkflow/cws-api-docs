@@ -35,11 +35,11 @@ tags:
     - name: Work Order Groups Faults
       description: Work Order Group Faults operations.
     - name: Inventory Supplier Items
-      description: Alpha Preview - Inventory Item operations.
+      description: Pre-Alpha Preview 
     - name: Inventory Supplier Purchase Orders
       description: Pre-Alpha Preview 
     - name: Inventory Supplier Orders
-      description: Alpha Preview - Inventory Order operations.
+      description: Pre-Alpha Preview 
 
     
 paths:
