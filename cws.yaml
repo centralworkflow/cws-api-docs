@@ -1919,6 +1919,13 @@ paths:
               - Bearer: []
             tags:
                 - Inventory Supplier Purchase Orders
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
             requestBody:
                 required: true
                 content:
@@ -1941,7 +1948,7 @@ paths:
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
-                - in: query
+                - in: path
                   name: supplierId
                   required: true
                   schema:
@@ -1977,6 +1984,19 @@ paths:
               - Bearer: []
             tags:
                 - Inventory Supplier Purchase Orders
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: purchaseOrderId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Purchase Order
             
             requestBody:
                 required: true
@@ -2000,6 +2020,19 @@ paths:
               - Bearer: []
             tags:
                 - Inventory Supplier Purchase Orders
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: purchaseOrderId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Purchase Order
             responses:
                 '200': 
                     $ref: '#/components/responses/ResponseInventoryPurchaseOrderSuccess'
@@ -2021,7 +2054,7 @@ paths:
             tags:
                 - Inventory Supplier Orders
             parameters:
-                - in: query
+                - in: path
                   name: supplierId
                   required: true
                   schema:
@@ -2085,6 +2118,19 @@ paths:
               - Bearer: []
             tags:
                 - Inventory Supplier Orders
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: orderId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Order
             requestBody:
                 required: true
                 content:
@@ -2128,6 +2174,13 @@ paths:
               - Bearer: []
             tags:
                 - Inventory Supplier Items
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
             
             requestBody:
                 required: true
@@ -2151,13 +2204,12 @@ paths:
             tags:
                 - Inventory Supplier Items
             parameters:
-                - in: query
+                - in: path
                   name: supplierId
                   required: true
                   schema:
                       type: string
                   description: The UID of the Supplier
-
             responses:
                 '200': 
                     description: A successful operation
@@ -2188,6 +2240,20 @@ paths:
               - Bearer: []
             tags:
                 - Inventory Supplier Items
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: itemId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Item
+
             requestBody:
                 required: true
                 content:
@@ -2210,6 +2276,21 @@ paths:
               - Bearer: []
             tags:
                 - Inventory Supplier Items
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: itemId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Item
+
+            
             responses:
                 '200': 
                     $ref: '#/components/responses/ResponseInventoryItemSuccess'
@@ -3056,17 +3137,12 @@ components:
 
         InventoryPurchaseOrderPostSchema:
             type: object
-            required: 
-                - supplierId
             properties:
                 type:
                     type: string
                     default: new_order
                     enum: [new_order, replenishment, mixed]
                     description: The type of the purchase order
-                supplierId:
-                    type: string
-                    description: The UID of the Supplier
                 warehouseId:
                     type: string
                     description: The UID of the Warehouse.  
@@ -3118,9 +3194,12 @@ components:
                     status:
                         type: string
                         enum: [pending, awaiting_shipment, left_factory, stock_received]
-                    possibleNextStatus:
-                        type: string
-                        enum: [pending, awaiting_shipment, left_factory, stock_received]
+                    nextStatus:
+                        type: array
+                        example: [pending, awaiting_shipment, left_factory, stock_received]
+                        items: 
+                            type: string
+                            enum: [pending, awaiting_shipment, left_factory, stock_received]
                     items:
                         type: array
                         items:
@@ -3169,7 +3248,6 @@ components:
         InventoryOrderPostSchema:
             type: object
             required:
-                - supplierId
                 - ref
                 - sender
                 - recipient
@@ -3177,9 +3255,6 @@ components:
                 warehouseId:
                     type: string
                     description: The UID of the Warehouse
-                supplierId:
-                    type: string
-                    description: The UID of the Supplier
                 factoryId:
                     type: string
                     description: The UID of the Factory
@@ -3210,9 +3285,12 @@ components:
                     status:
                         type: string
                         enum: [open, dispatch_ready, pickup_booked, dispatched, complete, cancelled]
-                    possibleNextStatus:
-                        type: string
-                        enum: [open, dispatch_ready, cancelled]
+                    nextStatus:
+                        type: array
+                        example: [open, dispatch_ready, cancelled]
+                        items: 
+                            type: string
+                            enum: [open, dispatch_ready, cancelled]
                     createdAt:
                         type: string
                         description: ISO-8601 date - The date of creation
@@ -3258,9 +3336,12 @@ components:
                 status:
                     type: string
                     enum: [open, pickup_booked, dispatched, complete, cancelled]
-                possibleNextStatus:
-                    type: string
-                    enum: [open, pickup_booked, dispatched, complete, cancelled]
+                nextStatus:
+                    type: array
+                    example: [open,  dispatched ]
+                    items:
+                        type: string
+                        enum: [open, pickup_booked, dispatched, complete, cancelled]
                 sender:
                     $ref: '#/components/schemas/ContactGetSchema'
                 recipient:
@@ -3288,25 +3369,18 @@ components:
                     type: string
                     description: ISO-8601 date - The date of creation
                     example: 2022-04-10T14:30:00+02:00
-                    
-
-
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Item
         
         InventoryItemPostSchema:
             type: object
             required: 
-                - supplierId
                 - ident
                 - descrip
             properties:
                 warehouseId:
                     type: string
                     description: The UID of the Warehouse
-                supplierId:
-                    type: string
-                    description: The UID of the Supplier
                 ident:
                     type: string
                     description: The ident of the item
