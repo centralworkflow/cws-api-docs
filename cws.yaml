@@ -1911,7 +1911,7 @@ paths:
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
 
 
-    #----------------------------------------------------------------------------------------------------------------------- Inventory Supplier Purchase Orders
+    #----------------------------------------------------------------------------------------------------------------------- Inventory 
 
     /inventory/suppliers:
         get:
@@ -2003,9 +2003,13 @@ paths:
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
 
+    #----------------------------------------------------------------------------------------------------------------------- Inventory Supplier Purchase Orders
+
     /inventory/suppliers/{supplierId}/purchase-orders:
         post:
             summary: Create a new Purchase Order
+            description: |
+                items: if the items are supplied they will be created. If they do not exist they will be created. 
             x-beta: true
             security:
               - Bearer: []
@@ -2186,6 +2190,8 @@ paths:
     /inventory/suppliers/{supplierId}/orders:
         post:
             summary: Create a new Order
+            description: |
+                items: if the items are supplied they will be created. If they do not exist they will be created. 
             security:
               - Bearer: []
             tags:
@@ -3493,6 +3499,37 @@ components:
                 qtyReceived:
                     type: integer
                     description: The received amount
+        
+        InventoryPurchaseOrderItemGetSchema:
+            type: object
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                qtyReceived:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                qtyVariance:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemGetSchema'
+
+        InventoryPurchaseOrderItemPostSchema:
+            type: object
+            required:
+              - qty
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemPostSchema'
+
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Order
 
@@ -3513,16 +3550,31 @@ components:
                     type: string
                     description: The reference number of the order
                 sender:
-                    $ref: '#/components/schemas/ContactPostSchema'
+                    type: object
+                    properties:
+                        name: 
+                            type: string
+                            example: 'John Smith'
+                        address: 
+                            $ref: '#/components/schemas/AddressSchema'
                 recipient:
-                    $ref: '#/components/schemas/ContactGetSchema'
+                    type: object
+                    properties:
+                        name: 
+                            type: string
+                            example: 'John Smith'
+                        companyName: 
+                            type: string
+                            example: 'ABC Company'
+                        address: 
+                            $ref: '#/components/schemas/AddressSchema'
                 shippingNote:
                     type: string
                     description: A shipping note
                 items:
                     type: array
                     items:
-                        $ref: '#/components/schemas/InventoryItemPostSchema'
+                        $ref: '#/components/schemas/InventoryOrderItemPostSchema'
                         
 
         InventoryOrderGetSchema:
@@ -3549,7 +3601,7 @@ components:
                     items:
                         type: array
                         items:
-                            $ref: '#/components/schemas/InventoryItemGetSchema'
+                            $ref: '#/components/schemas/InventoryOrderItemGetSchema'
                     shipments:
                         type: array
                         items:
@@ -3579,6 +3631,28 @@ components:
                 qty:
                     type: integer
                     description: The requested amount
+        
+        InventoryOrderItemGetSchema:
+            type: object
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemGetSchema'
+        
+        InventoryOrderItemPostSchema:
+            type: object
+            required:
+              - qty
+            properties:
+                qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                item: 
+                    $ref: '#/components/schemas/InventoryItemPostSchema'
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Order Shipment
         
@@ -3601,9 +3675,21 @@ components:
                         type: string
                         enum: [open, pickup_booked, dispatched, complete, cancelled]
                 sender:
-                    $ref: '#/components/schemas/ContactGetSchema'
+                    type: object
+                    properties:
+                        name: 
+                            type: string
+                            example: 'ABC Company'
+                        address: 
+                            $ref: '#/components/schemas/AddressSchema'
                 recipient:
-                    $ref: '#/components/schemas/ContactGetSchema'
+                    type: object
+                    properties:
+                        name: 
+                            type: string
+                            example: 'John Smith'
+                        address: 
+                            $ref: '#/components/schemas/AddressSchema'
                 ref:
                     type: string
                     description: The reference number of the shipment
@@ -3706,61 +3792,9 @@ components:
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Order Item
 
-        InventoryOrderItemGetSchema:
-            type: object
-            required:
-              - qty
-            properties:
-                qty:
-                    type: integer
-                    description: The quantity of the item
-                    example: 1
-                item: 
-                    $ref: '#/components/schemas/InventoryItemGetSchema'
+     
+
         
-        InventoryOrderItemPostSchema:
-            type: object
-            required:
-              - qty
-            properties:
-                qty:
-                    type: integer
-                    description: The quantity of the item
-                    example: 1
-                item: 
-                    $ref: '#/components/schemas/InventoryItemPostSchema'
-
-
-        InventoryPurchaseOrderItemGetSchema:
-            type: object
-            properties:
-                qty:
-                    type: integer
-                    description: The quantity of the item
-                    example: 1
-                qtyReceived:
-                    type: integer
-                    description: The quantity of the item
-                    example: 1
-                qtyVariance:
-                    type: integer
-                    description: The quantity of the item
-                    example: 1
-                item: 
-                    $ref: '#/components/schemas/InventoryItemGetSchema'
-
-        InventoryPurchaseOrderItemPostSchema:
-            type: object
-            required:
-              - qty
-            properties:
-                qty:
-                    type: integer
-                    description: The quantity of the item
-                    example: 1
-                item: 
-                    $ref: '#/components/schemas/InventoryItemPostSchema'
-
 
         WoSchema:
             type: object
