@@ -2043,6 +2043,51 @@ paths:
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
         
+    /inventory/suppliers/{supplierId}/purchase-orders/{purchaseOrderId}/item/{itemId}:
+        patch:
+            summary: Update a Purchase Order Item
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Purchase Orders
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: purchaseOrderId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Purchase Order
+                - in: path
+                  name: itemId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Purchase Order Item
+            
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryPurchaseOrderItemPatchSchema'
+            
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryPurchaseOrderItemSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+    
+
 
     #----------------------------------------------------------------------------------------------------------------------- Inventory Supplier Orders
 
@@ -2163,6 +2208,49 @@ paths:
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
 
 
+    /inventory/suppliers/{supplierId}/orders/{orderId}/item/{itemId}:
+        patch:
+            summary: Update an Order Item
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Orders
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: orderId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Order
+                - in: path
+                  name: itemId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Purchase Order Item
+            
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InventoryOrderItemPatchSchema'
+            
+            responses:
+                '200': 
+                    $ref: '#/components/responses/ResponseInventoryOrderItemSuccess'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
         
 
     #----------------------------------------------------------------------------------------------------------------------- Inventory Catalog
@@ -2485,6 +2573,20 @@ components:
                                 example: true
                             data:
                                 $ref: '#/components/schemas/InventoryOrderGetSchema'
+        
+        ResponseInventoryOrderItemSuccess:
+            description: A successful Inventory Order operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: true
+                            data:
+                                $ref: '#/components/schemas/InventoryOrderItemGetSchema'
 
         ResponseInventoryPurchaseOrderSuccess:
             description: A successful Inventory Purchase Order operation
@@ -2498,7 +2600,21 @@ components:
                                 description: Whether the request was successful
                                 example: true
                             data:
-                                $ref: '#/components/schemas/InventoryPurchaseOrderPostSchema'
+                                $ref: '#/components/schemas/InventoryPurchaseOrderGetSchema'
+        
+        ResponseInventoryPurchaseOrderItemSuccess:
+            description: A successful Inventory Purchase Order operation
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: true
+                            data:
+                                $ref: '#/components/schemas/InventoryPurchaseOrderItemGetSchema'
 
         ResponseInventoryItemSuccess:
             description: A successful Inventory Item operation
@@ -3243,6 +3359,16 @@ components:
                     description: ISO-8601 date -  Esitmated Arrival
                     example: 2022-04-10T14:30:00+02:00
 
+        InventoryPurchaseOrderItemPatchSchema:
+            type: object
+            properties:
+                qty:
+                    type: integer
+                    description: The requested amount
+                qtyReceived:
+                    type: integer
+                    description: The received amount
+
         #----------------------------------------------------------------------------------------------------------------------- Inventory Order
 
         InventoryOrderPostSchema:
@@ -3322,6 +3448,13 @@ components:
                     type: string
                     description: A shipping note
 
+        InventoryOrderItemPatchSchema:
+            type: object
+            properties:
+                qty:
+                    type: integer
+                    description: The requested amount
+
         #----------------------------------------------------------------------------------------------------------------------- Inventory Order Shipment
         
         InventoryShipmentGetSchema:
@@ -3349,6 +3482,15 @@ components:
                 ref:
                     type: string
                     description: The reference number of the shipment
+                altRef1:
+                    type: string
+                    description: The alt reference number of the shipment
+                altRef2:
+                    type: string
+                    description: The alt reference number of the shipment
+                altRef3:
+                    type: string
+                    description: The alt reference number of the shipment
                 courier:
                     type: string
                     description: The courier of the shipment
@@ -3396,6 +3538,10 @@ components:
                 barcode:
                     type: string
                     description: The barcode of the item
+                bestBeforeAt:
+                    type: string
+                    description: ISO-8601 date - The date of creation
+                    example: 2022-04-10T14:30:00+02:00
                 qtyStock:
                     type: integer
                     description: The quantity of the item in stock
@@ -3462,10 +3608,16 @@ components:
 
         InventoryPurchaseOrderItemGetSchema:
             type: object
-            required:
-              - qty
             properties:
                 qty:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                qtyReceived:
+                    type: integer
+                    description: The quantity of the item
+                    example: 1
+                qtyVariance:
                     type: integer
                     description: The quantity of the item
                     example: 1
