@@ -34,6 +34,8 @@ tags:
       description: Work Order Group Products operations.
     - name: Work Order Groups Faults
       description: Work Order Group Faults operations.
+    - name: Inventory
+      description: Pre-Alpha Preview
     - name: Inventory Supplier Items
       description: Pre-Alpha Preview 
     - name: Inventory Supplier Purchase Orders
@@ -1911,6 +1913,96 @@ paths:
 
     #----------------------------------------------------------------------------------------------------------------------- Inventory Supplier Purchase Orders
 
+    /inventory/suppliers:
+        get:
+            summary: Get a list of all Suppliers
+            security:
+              - Bearer: []
+            tags:
+                - Inventory
+            responses:
+                '200':
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/InventorySupplierGetSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+    /inventory/factories:
+        get:
+            summary: Get a list of all Factories
+            security:
+              - Bearer: []
+            tags:
+                - Inventory
+            responses:
+                '200':
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/InventoryFactoryGetSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+
+    /inventory/warehouses:
+        get:
+            summary: Get a list of all Warehouses
+            security:
+              - Bearer: []
+            tags:
+                - Inventory
+            responses:
+                '200':
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/InventoryWarehouseGetSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+
     /inventory/suppliers/{supplierId}/purchase-orders:
         post:
             summary: Create a new Purchase Order
@@ -3250,6 +3342,39 @@ components:
                           example: 'E7rApNKbg4'
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Purchase Order
+
+        InventorySupplierGetSchema:
+            type: object
+            properties:
+                supplierId:
+                    type: string
+                    description: The UID of the Supplier
+                supplierName:
+                    type: string
+                    description: The name of the Supplier
+                    example: 'My Supplier'
+
+        InventoryWarehouseGetSchema:
+            type: object
+            properties:
+                warehouseId:
+                    type: string
+                    description: The UID of the Warehouse
+                warehouseName:
+                    type: string
+                    description: The name of the Warehouse
+                    example: 'My Warehouse'
+
+        InventoryFactoryGetSchema:
+            type: object
+            properties:
+                factoryId:
+                    type: string
+                    description: The UID of the Factory
+                factoryName:
+                    type: string
+                    description: The name of the Factory
+                    example: 'My Factory'
 
         InventoryPurchaseOrderPostSchema:
             type: object
