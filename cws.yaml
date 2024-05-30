@@ -224,35 +224,36 @@ paths:
                       default: 0
                   description: The record to start from, zero indexed, default 0
                 - in: query
-                  name: updatedFrom
-                  schema:
-                      type: string
-                  description: ISO-8601 date - When the lookup should start.
-                  example: 2022-04-10T14:30:00+02:00
-                - in: query
-                  name: updatedUntil
-                  schema:
-                      type: string
-                  description: ISO-8601 date - When the lookup should end.
-                  example: 2022-04-10T14:30:00+02:00
-                - in: query
-                  name: createdFrom
-                  schema:
-                      type: string
-                  description: ISO-8601 date - When the lookup should start.
-                  example: 2022-04-10T14:30:00+02:00
-                - in: query
-                  name: createdUntil
-                  schema:
-                      type: string
-                  description: ISO-8601 date - When the lookup should end.
-                  example: 2022-04-10T14:30:00+02:00
-                - in: query
                   name: sort
                   description: The sort direction
                   schema:
                       type: string
                       enum: [asc, desc]
+                - in: query
+                  name: updatedFrom
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should start.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: updatedUntil
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should end.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: createdFrom
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should start.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: createdUntil
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should end.
+                  example: "2022-04-10T14:30:00+02:00"
+                
                 - in: query
                   name: thirdpartyRef
                   schema:
@@ -888,25 +889,25 @@ paths:
                   schema:
                       type: string
                   description: ISO-8601 date - When the lookup should start.
-                  example: 2022-04-10T14:30:00+02:00
+                  example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: updatedUntil
                   schema:
                       type: string
                   description: ISO-8601 date - When the lookup should end.
-                  example: 2022-04-10T14:30:00+02:00
+                  example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdFrom
                   schema:
                       type: string
                   description: ISO-8601 date - When the lookup should start.
-                  example: 2022-04-10T14:30:00+02:00
+                  example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdUntil
                   schema:
                       type: string
                   description: ISO-8601 date - When the lookup should end.
-                  example: 2022-04-10T14:30:00+02:00
+                  example: "2022-04-10T14:30:00+02:00"
             responses:
                 '200':
                     $ref: '#/components/responses/ResponseWoListSuccess'
@@ -2009,13 +2010,32 @@ paths:
         post:
             summary: Create a new Purchase Order
             description: |
-                items: if the items are supplied they will be created. If they do not exist they will be created. 
+                items: if the items are supplied they will be created if they do not exist.
             x-beta: true
             security:
               - Bearer: []
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
+                - in: query
+                  name: limit
+                  schema:
+                      type: integer
+                      default: 20
+                      maximum: 500
+                  description: The number of workorders to return Default 20 Max 500
+                - in: query
+                  name: start
+                  schema:
+                      type: integer
+                      default: 0
+                  description: The record to start from, zero indexed, default 0
+                - in: query
+                  name: sort
+                  description: The sort direction
+                  schema:
+                      type: string
+                      enum: [asc, desc]
                 - in: path
                   name: supplierId
                   required: true
@@ -2231,6 +2251,25 @@ paths:
                   schema:
                       type: string
                   description: The UID of the Supplier
+                - in: query
+                  name: limit
+                  schema:
+                      type: integer
+                      default: 20
+                      maximum: 500
+                  description: The number of workorders to return Default 20 Max 500
+                - in: query
+                  name: start
+                  schema:
+                      type: integer
+                      default: 0
+                  description: The record to start from, zero indexed, default 0
+                - in: query
+                  name: sort
+                  description: The sort direction
+                  schema:
+                      type: string
+                      enum: [asc, desc]
             responses:
                 '200': 
                     description: A successful operation
@@ -2373,7 +2412,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/InventoryItemPostSchema'
+                            $ref: '#/components/schemas/InventoryItemPostSingleSchema'
             responses:
                 '200': 
                     $ref: '#/components/responses/ResponseInventoryItemSuccess'
@@ -2555,7 +2594,7 @@ components:
                                             accessExpiresAt:
                                                 type: string
                                                 description: ISO-8601 date - When the token will expire
-                                                example: 2022-04-10T14:30:00+02:00
+                                                example: "2022-04-10T14:30:00+02:00"
                                             refreshToken:
                                                 type: string
                                                 description: Your new token
@@ -2563,7 +2602,7 @@ components:
                                             refreshExpiresAt:
                                                 type: string
                                                 description: ISO-8601 date -  When the token will expire
-                                                example: 2022-04-10T14:30:00+02:00
+                                                example: "2022-04-10T14:30:00+02:00"
 
         ResponseSuccess:
             description: A successful operation
@@ -3176,7 +3215,7 @@ components:
                 productPurchasedAt:
                     type: string
                     description: ISO-8601 date - The date of the purchase
-                    example: 2022-04-10T14:30:00+02:00
+                    example: "2022-04-10T14:30:00+02:00"
                 fault:
                     $ref: '#/components/schemas/WoProductFaultSchema'
 
@@ -3254,11 +3293,11 @@ components:
                 eventStartAt:
                     type: string
                     description: ISO-8601 date - The date of the event
-                    example: 2022-04-10T14:30:00+02:00
+                    example: "2022-04-10T14:30:00+02:00"
                 eventEndAt:
                     type: string
                     description: ISO-8601 date - The date of the event
-                    example: 2022-04-10T14:30:00+02:00
+                    example: "2022-04-10T14:30:00+02:00"
                 eventSubject:
                     type: string
                     description: the subject of the event
@@ -3274,7 +3313,7 @@ components:
                 eventCompletedAt:
                     type: string
                     description: ISO-8601 date - The date of the event
-                    example: 2022-04-10T14:30:00+02:00
+                    example: "2022-04-10T14:30:00+02:00"
                 eventDescription:
                     type: string
                     description: the description of the event
@@ -3419,12 +3458,12 @@ components:
                     description: The destination port
                 departAt:
                     type: string
-                    description: ISO-8601 date -  Estimated Depature
-                    example: 2022-04-10T14:30:00+02:00
+                    description: ISO-8601 date -  Estimated Departure
+                    example: "2022-04-10T14:30:00+02:00"
                 arriveAt:
                     type: string
-                    description: ISO-8601 date -  Esitmated Arrival
-                    example: 2022-04-10T14:30:00+02:00
+                    description: ISO-8601 date -  Estimated Arrival
+                    example: "2022-04-10T14:30:00+02:00"
                 items:
                     type: array
                     items:
@@ -3454,7 +3493,7 @@ components:
                     createdAt:
                         type: string
                         description: ISO-8601 date - The date of creation
-                        example: 2022-04-10T14:30:00+02:00
+                        example: "2022-04-10T14:30:00+02:00"
 
         InventoryPurchaseOrderPatchSchema:
             type: object
@@ -3483,12 +3522,12 @@ components:
                     description: The destination port
                 departAt:
                     type: string
-                    description: ISO-8601 date -  Estimated Depature
-                    example: 2022-04-10T14:30:00+02:00
+                    description: ISO-8601 date -  Estimated Departure
+                    example: "2022-04-10T14:30:00+02:00"
                 arriveAt:
                     type: string
-                    description: ISO-8601 date -  Esitmated Arrival
-                    example: 2022-04-10T14:30:00+02:00
+                    description: ISO-8601 date -  Estimated Arrival
+                    example: "2022-04-10T14:30:00+02:00"
 
         InventoryPurchaseOrderItemPatchSchema:
             type: object
@@ -3498,7 +3537,11 @@ components:
                     description: The requested amount
                 qtyReceived:
                     type: integer
-                    description: The received amount
+                    description: The newly received amount. Will be added to the currently received amount.
+                costPrice:
+                    type: number
+                    description: The cost price of the item
+                    example: 1.00
         
         InventoryPurchaseOrderItemGetSchema:
             type: object
@@ -3525,7 +3568,7 @@ components:
             properties:
                 qty:
                     type: integer
-                    description: The quantity of the item
+                    description: The quantity of the item on the purchase order
                     example: 1
                 item: 
                     $ref: '#/components/schemas/InventoryItemPostSchema'
@@ -3543,9 +3586,6 @@ components:
                 warehouseId:
                     type: string
                     description: The UID of the Warehouse
-                factoryId:
-                    type: string
-                    description: The UID of the Factory
                 ref:
                     type: string
                     description: The reference number of the order
@@ -3597,7 +3637,7 @@ components:
                     createdAt:
                         type: string
                         description: ISO-8601 date - The date of creation
-                        example: 2022-04-10T14:30:00+02:00
+                        example: "2022-04-10T14:30:00+02:00"
                     items:
                         type: array
                         items:
@@ -3618,9 +3658,24 @@ components:
                     type: string
                     description: The reference number of the order
                 sender:
-                    $ref: '#/components/schemas/ContactGetSchema'
+                    type: object
+                    properties:
+                        name:
+                            type: string
+                            example: 'John Smith'
+                        address:
+                            $ref: '#/components/schemas/AddressSchema'
                 recipient:
-                    $ref: '#/components/schemas/ContactGetSchema'
+                    type: object
+                    properties:
+                        name:
+                            type: string
+                            example: 'John Smith'
+                        companyName:
+                            type: string
+                            example: 'ABC Company'
+                        address:
+                            $ref: '#/components/schemas/AddressSchema'
                 shippingNote:
                     type: string
                     description: A shipping note
@@ -3659,7 +3714,7 @@ components:
         InventoryShipmentGetSchema:
             type: object
             properties:
-                InventoryShipmentId:
+                shipmentId:
                     type: string
                     description: The UID of the Shipment
                 warehouseId:
@@ -3703,8 +3758,14 @@ components:
                     type: string
                     description: The alt reference number of the shipment
                 courier:
-                    type: string
-                    description: The courier of the shipment
+                    type: object
+                    properties:
+                        courierId: 
+                            type: string
+                            example: 'E7rApNKbg4'
+                        courierName: 
+                            type: string
+                            example: 'ABC Company'
                 trackingNumber:
                     type: string
                     description: The tracking number of the shipment
@@ -3717,11 +3778,11 @@ components:
                 createdAt:
                     type: string
                     description: ISO-8601 date - The date of creation
-                    example: 2022-04-10T14:30:00+02:00
+                    example: "2022-04-10T14:30:00+02:00"
                 dispatchAt:
                     type: string
                     description: ISO-8601 date - The date of creation
-                    example: 2022-04-10T14:30:00+02:00
+                    example: "2022-04-10T14:30:00+02:00"
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Item
         
@@ -3730,10 +3791,14 @@ components:
             required: 
                 - ident
                 - descrip
+                - factoryId
             properties:
                 warehouseId:
                     type: string
                     description: The UID of the Warehouse
+                factoryId:
+                    type: string
+                    description: The UID of the Factory
                 ident:
                     type: string
                     description: The ident of the item
@@ -3752,12 +3817,20 @@ components:
                 bestBeforeAt:
                     type: string
                     description: ISO-8601 date - The date of creation
-                    example: 2022-04-10T14:30:00+02:00
-                qtyStock:
-                    type: integer
-                    description: The quantity of the item in stock
-                    default: 0
-                    example: 1
+                    example: "2022-04-10T14:30:00+02:00"
+
+
+        InventoryItemPostSingleSchema:
+            allOf:
+                - $ref: '#/components/schemas/InventoryItemPostSchema'
+                - type: object
+                  properties:
+                    
+                      qtyStock:
+                          type: integer
+                          description: The quantity of the item in stock or to be added to stock
+                          default: 0
+                          example: 1
         
         InventoryItemGetSchema:
             allOf:
@@ -3979,7 +4052,7 @@ components:
                 lastChangeAt:
                     type: string
                     description: ISO-8601 date - The date of the last change
-                    example: 2022-04-10T14:30:00+02:00
+                    example: "2022-04-10T14:30:00+02:00"
                 firstWoId:
                     type: string
                     description: The UID of the first Work Order
