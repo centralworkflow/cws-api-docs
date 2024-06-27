@@ -228,7 +228,9 @@ paths:
                   description: The sort direction
                   schema:
                       type: string
+                      default: desc
                       enum: [asc, desc]
+
                 - in: query
                   name: updatedFrom
                   schema:
@@ -2017,25 +2019,6 @@ paths:
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
-                - in: query
-                  name: limit
-                  schema:
-                      type: integer
-                      default: 20
-                      maximum: 500
-                  description: The number of workorders to return Default 20 Max 500
-                - in: query
-                  name: start
-                  schema:
-                      type: integer
-                      default: 0
-                  description: The record to start from, zero indexed, default 0
-                - in: query
-                  name: sort
-                  description: The sort direction
-                  schema:
-                      type: string
-                      enum: [asc, desc]
                 - in: path
                   name: supplierId
                   required: true
@@ -2070,6 +2053,60 @@ paths:
                   schema:
                       type: string
                   description: The UID of the Supplier
+                - in: query
+                  name: limit
+                  schema:
+                      type: integer
+                      default: 20
+                      maximum: 500
+                  description: The number of workorders to return Default 20 Max 500
+                - in: query
+                  name: start
+                  schema:
+                      type: integer
+                      default: 0
+                  description: The record to start from, zero indexed, default 0
+                - in: query
+                  name: sort
+                  description: The sort direction
+                  schema:
+                      type: string
+                      default: desc
+                      enum: [asc, desc]
+
+                - in: query
+                  name: updatedFrom
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should start.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: updatedUntil
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should end.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: createdFrom
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should start.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: createdUntil
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should end.
+                  example: "2022-04-10T14:30:00+02:00"
+                
+                - in: query
+                  name: status
+                  schema:
+                      type: string
+                      enum: [pending, awaiting_shipment, left_factory, stock_received]
+                  description: The status of the purchase order
+                  example: "pending"
+
             responses:
                 '200': 
                     description: A successful operation
@@ -2083,9 +2120,16 @@ paths:
                                         description: Whether the request was successful
                                         example: true
                                     data:
-                                        type: array
-                                        items:
-                                            $ref: '#/components/schemas/InventoryPurchaseOrderGetSchema'
+                                        type: object
+                                        properties:
+                                            resultsCount:
+                                                type: integer
+                                                description: The total number of results, ignoring the limit
+                                                example: 100
+                                            results:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/InventoryPurchaseOrderGetSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
                 '405':
@@ -2269,7 +2313,39 @@ paths:
                   description: The sort direction
                   schema:
                       type: string
+                      default: desc
                       enum: [asc, desc]
+
+                - in: query
+                  name: updatedFrom
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should start.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: updatedUntil
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should end.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: createdFrom
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should start.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: createdUntil
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should end.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: status
+                  schema: 
+                    type: string
+                    enum: [open, dispatch_ready, pickup_booked, dispatched, complete, cancelled]
+                  description: The status of the order
             responses:
                 '200': 
                     description: A successful operation
@@ -2283,9 +2359,16 @@ paths:
                                         description: Whether the request was successful
                                         example: true
                                     data:
-                                        type: array
-                                        items: 
-                                            $ref: '#/components/schemas/InventoryOrderGetSchema'
+                                        type: object
+                                        properties:
+                                            resultsCount:
+                                                type: integer
+                                                description: The total number of results, ignoring the limit
+                                                example: 100
+                                            results:
+                                                type: array
+                                                items: 
+                                                    $ref: '#/components/schemas/InventoryOrderGetSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
                 '405':
@@ -3953,23 +4036,7 @@ components:
         WoListResponseSchema:
             type: object
             properties:
-                totalCount:
-                    type: integer
-                    description: The total number of results, ignoring the limit
-                    example: 100
-                totalPages:
-                    type: integer
-                    description: The total number of pages
-                    example: 5
-                pageSize:
-                    type: integer
-                    description: The number of results per page
-                    example: 20
-                currentPage:
-                    type: integer
-                    description: The current page
-                    example: 1
-                resutlsCount:
+                resultsCount:
                     type: integer
                     description: The current page
                     example: 1
