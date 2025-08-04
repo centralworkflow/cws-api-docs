@@ -4107,6 +4107,12 @@ components:
                 ref:
                     type: string
                     example: 'myref'
+                thirdpartyRef:
+                    type: string
+                    example: 'third'
+                externalApiRef:
+                    type: string
+                    example: 'abc123'
                 delayRef:
                     type: string
                     example: 'mydelayref'
