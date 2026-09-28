@@ -4,6 +4,31 @@ info:
     title: CWS API Documentation
     description: |
         This is the documentation for the CWS REST API.
+
+        ## Rate Limiting
+
+        The API is rate limited to **100 requests per minute**.
+
+        The limit is applied per API user, so your requests are not affected by
+        other integrations. Endpoints that do not require authentication are
+        limited per IP address instead.
+
+        The limit uses a sliding 60 second window rather than fixed clock
+        minutes, so allowance frees up continuously as older requests age out.
+        Requests rejected for exceeding the limit do not consume quota.
+
+        Every response includes the following headers so you can track usage:
+
+        | Header | Meaning |
+        |--------|---------|
+        | `X-RateLimit-Limit` | Total allowance (requests per minute) |
+        | `X-RateLimit-Remaining` | Requests remaining in the current window |
+        | `X-RateLimit-Reset` | Unix timestamp when allowance starts to free up |
+
+        When the limit is exceeded the API responds with HTTP **429 Too Many
+        Requests** and a `Retry-After` header giving the number of seconds to
+        wait before retrying. A steady rate just under the limit is always safe;
+        avoid bursting and back off when `X-RateLimit-Remaining` approaches zero.
     contact:
         name: Link Technology
         email: systems@linktechnology.net
@@ -86,6 +111,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /auth/refresh:
         post:
@@ -113,6 +140,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     #----------------------------------------------------------------------------------------------------------------------- User
 
@@ -168,6 +197,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /user/permissions:
         get:
@@ -198,6 +229,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     #----------------------------------------------------------------------------------------------------------------------- Work Orders
 
@@ -283,6 +316,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
     /wo-stats:
         get:
             summary: Get a list of all Work Order Statistics.
@@ -299,6 +334,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
     /wos/{woId}:
         get:
             summary: Get a Work Order by UID
@@ -322,6 +359,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         patch:
             summary: Update a Work Order
             tags:
@@ -352,6 +391,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /wos/{woId}/statuses:
         get:
@@ -391,6 +432,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
         put:
             summary: Update the status of a Work Order
@@ -437,6 +480,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /wos/{woId}/logs:
         get:
@@ -475,6 +520,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Add a log to a Work Order
             tags:
@@ -504,6 +551,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /wos/{woId}/logs/{logId}:
         get:
@@ -545,6 +594,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         delete:
             summary: Delete a log from a Work Order
             tags:
@@ -573,6 +624,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /wos/{woId}/parts:
         get:
@@ -610,6 +663,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Add a part to a Work Order
             tags:
@@ -649,6 +704,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /wos/{woId}/parts/{partId}:
         get:
@@ -690,6 +747,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
         delete:
             summary: Remove a part from a Work Order
@@ -719,6 +778,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /wos/{woId}/charges:
         get:
@@ -756,6 +817,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Add a charge to a Work Order
             tags:
@@ -795,6 +858,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /wos/{woId}/charges/{chargeId}:
         get:
@@ -836,6 +901,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         delete:
             summary: Delete a charge from a Work Order
             tags:
@@ -864,6 +931,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     #----------------------------------------------------------------------------------------------------------------------- Work Order Group
 
@@ -921,6 +990,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Create a new Work Order in a Work Order Group
 
@@ -963,6 +1034,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/statuses:
         get:
@@ -1005,6 +1078,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Create a new Status for a Work Order Group
             tags:
@@ -1044,6 +1119,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/product-brands:
         get:
@@ -1087,6 +1164,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Create a new Brand for a Work Order Group
             tags:
@@ -1137,6 +1216,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/product-brands/{brandId}:
         put:
@@ -1191,6 +1272,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/product-types:
         get:
@@ -1233,6 +1316,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
         post:
             summary: Create a new Type for a Work Order Group
@@ -1284,6 +1369,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/product-types/{typeId}:
         put:
@@ -1338,6 +1425,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/product-models:
         get:
@@ -1380,6 +1469,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Create a new Model
             tags:
@@ -1446,6 +1537,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/product-models/{modelId}:
         put:
@@ -1500,6 +1593,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/fault-area-symptoms:
         get:
@@ -1538,6 +1633,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Create a new Fault Symptom for a Work Order Group
             tags:
@@ -1590,6 +1687,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/fault-actions:
         get:
@@ -1628,6 +1727,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         post:
             summary: Create a new Fault Action for a Work Order Group
             tags:
@@ -1675,6 +1776,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/alt-wo-1:
         post:
@@ -1775,6 +1878,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /groups/{groupId}/alt-wo-2:
         post:
@@ -1914,6 +2019,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
 
     #----------------------------------------------------------------------------------------------------------------------- Inventory 
@@ -1947,6 +2054,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /inventory/factories:
         get:
@@ -1977,6 +2086,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /inventory/warehouses:
         get:
@@ -2007,6 +2118,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     #----------------------------------------------------------------------------------------------------------------------- Inventory Supplier Purchase Orders
 
@@ -2042,6 +2155,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         get:
             summary: Get a list of all Purchase Orders
             security:
@@ -2152,6 +2267,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         
     /inventory/suppliers/{supplierId}/purchase-orders/{purchaseOrderId}:
         patch:
@@ -2190,6 +2307,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         get:
             summary: Get a Purchase Order
             security:
@@ -2218,6 +2337,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         
     /inventory/suppliers/{supplierId}/purchase-orders/{purchaseOrderId}/item/{itemId}:
         patch:
@@ -2262,6 +2383,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
     
 
 
@@ -2298,6 +2421,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         get:
             summary: Get a list of all Orders
             security:
@@ -2405,6 +2530,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         
     /inventory/suppliers/{supplierId}/orders/{orderId}:
         patch:
@@ -2441,6 +2568,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         get:
             summary: Get an Order
             security:
@@ -2456,6 +2585,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
 
     /inventory/suppliers/{supplierId}/orders/{orderId}/item/{itemId}:
@@ -2501,6 +2632,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         
 
     #----------------------------------------------------------------------------------------------------------------------- Inventory Catalog
@@ -2535,6 +2668,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         get:
             summary: Get a list of all Items
             security:
@@ -2637,6 +2772,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
     /inventory/suppliers/{supplierId}/items/{itemId}:
         patch:
@@ -2674,6 +2811,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
         get:
             summary: Get an Item
@@ -2705,6 +2844,8 @@ paths:
                     $ref: '#/components/responses/ResponseMethodNotAllowed'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
 #----------------------------------------------------------------------------------------------------------------------- Components
 components:
@@ -2872,6 +3013,38 @@ components:
 
         ResponseMethodNotAllowed:
             description: The request is to a non existant endpoint or is using the wrong method
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorSchema'
+
+        ResponseErrorRateLimitExceeded:
+            description: |
+                Too many requests. The API is limited to 100 requests per minute per
+                user (per IP for unauthenticated endpoints) over a sliding 60 second
+                window. Rejected requests do not consume quota. Wait the number of
+                seconds given in the Retry-After header before retrying.
+            headers:
+                X-RateLimit-Limit:
+                    description: Total request allowance per minute
+                    schema:
+                        type: integer
+                        example: 100
+                X-RateLimit-Remaining:
+                    description: Requests remaining in the current window
+                    schema:
+                        type: integer
+                        example: 0
+                X-RateLimit-Reset:
+                    description: Unix timestamp when allowance starts to free up
+                    schema:
+                        type: integer
+                        example: 1758868800
+                Retry-After:
+                    description: Seconds to wait before retrying
+                    schema:
+                        type: integer
+                        example: 30
             content:
                 application/json:
                     schema:
