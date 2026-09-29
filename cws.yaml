@@ -115,8 +115,45 @@ paths:
                     $ref: '#/components/responses/ResponseToken'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
+
+    /auth/all:
+        post:
+            summary: Create a new Access Token and return the User's details and permissions in one call.
+            description: |
+                - Identical to POST /auth, but the response also includes the authenticated User's details and permissions.
+                - The token values are nested under `authConfig`.
+                - The same authentication limits apply as POST /auth.
+            tags:
+                - Auth
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - username
+                                - password
+                            properties:
+                                username:
+                                    type: string
+                                    example: user@user.com
+                                password:
+                                    type: string
+                                    example: mysecretpassword
+            responses:
+                '200':
+                    $ref: '#/components/responses/ResponseTokenAll'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -144,8 +181,8 @@ paths:
                     $ref: '#/components/responses/ResponseToken'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -193,16 +230,12 @@ paths:
                                                 example: 'email@domain.com'
                                             phone:
                                                 type: string
-                                                description: The user's phone numberi
+                                                description: The user's phone number
                                                 example: '1234567890'
-                                            success:
-                                                type: boolean
-                                                description: Whether the request was successful
-                                                example: true
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -233,8 +266,8 @@ paths:
                                             $ref: '#/components/schemas/PermissionResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -320,8 +353,8 @@ paths:
                     $ref: '#/components/responses/ResponseWoListSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -333,13 +366,21 @@ paths:
                 - Work Orders
             security:
                 - bearerAuth: []
+            parameters:
+                - in: query
+                  name: dateFrom
+                  required: true
+                  schema:
+                      type: string
+                  description: ISO-8601 date - Only Work Orders updated at or after this date are counted.
+                  example: "2022-04-10T14:30:00+02:00"
             responses:
                 '200':
                     $ref: '#/components/responses/ResponseWoStatsSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -355,7 +396,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             responses:
@@ -363,8 +404,8 @@ paths:
                     $ref: '#/components/responses/ResponseWoSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -379,7 +420,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             requestBody:
@@ -389,14 +430,12 @@ paths:
                         schema:
                             $ref: '#/components/schemas/WoPatchSchema'
             responses:
-                '201':
+                '200':
                     $ref: '#/components/responses/ResponseWoSuccess'
-                '202':
-                    $ref: '#/components/responses/ResponseWoCreateSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -413,7 +452,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
 
@@ -432,12 +471,12 @@ paths:
                                     data:
                                         type: array
                                         items:
-                                            $ref: '#/components/schemas/StatusResponseSchema'
+                                            $ref: '#/components/schemas/WoAvailableStatusSchema'
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -453,7 +492,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             requestBody:
@@ -479,13 +518,25 @@ paths:
                                         - Closed
                                         - Cancelled
                                         - Invoiced
+                                        - Estimate
             responses:
                 '200':
-                    $ref: '#/components/responses/ResponseWoCreateSuccess'
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        $ref: '#/components/schemas/StatusResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -502,7 +553,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             responses:
@@ -520,12 +571,12 @@ paths:
                                     data:
                                         type: array
                                         items:
-                                            $ref: '#/components/schemas/LogResponseSchema'
+                                            $ref: '#/components/schemas/WoLogResponseSchema'
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -540,7 +591,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             requestBody:
@@ -552,11 +603,22 @@ paths:
 
             responses:
                 '200':
-                    $ref: '#/components/responses/ResponseWoCreateSuccess'
+                    description: A successful operation - the created log
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        $ref: '#/components/schemas/WoLogResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -573,13 +635,13 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
                 - in: path
                   name: logId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Log
             responses:
@@ -595,11 +657,11 @@ paths:
                                         description: Whether the request was successful
                                         example: true
                                     data:
-                                        $ref: '#/components/schemas/LogResponseSchema'
+                                        $ref: '#/components/schemas/WoLogResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -614,13 +676,13 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
                 - in: path
                   name: logId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Log
             responses:
@@ -628,8 +690,8 @@ paths:
                     $ref: '#/components/responses/ResponseSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -646,7 +708,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             responses:
@@ -667,8 +729,8 @@ paths:
                                             $ref: '#/components/schemas/PartItemResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -683,7 +745,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             requestBody:
@@ -708,8 +770,8 @@ paths:
                                         $ref: '#/components/schemas/PartItemResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -726,13 +788,13 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
                 - in: path
                   name: partId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Part
             responses:
@@ -751,8 +813,8 @@ paths:
                                         $ref: '#/components/schemas/PartItemResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -768,13 +830,13 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
                 - in: path
                   name: partId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Part
             responses:
@@ -782,8 +844,8 @@ paths:
                     $ref: '#/components/responses/ResponseSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -800,7 +862,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             responses:
@@ -821,8 +883,8 @@ paths:
                                             $ref: '#/components/schemas/ChargeResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -837,7 +899,7 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
             requestBody:
@@ -862,8 +924,8 @@ paths:
                                         $ref: '#/components/schemas/ChargeResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -880,13 +942,13 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
                 - in: path
                   name: chargeId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Charge
             responses:
@@ -905,8 +967,8 @@ paths:
                                         $ref: '#/components/schemas/ChargeResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -921,22 +983,22 @@ paths:
                 - in: path
                   name: woId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order
                 - in: path
                   name: chargeId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the charge
             responses:
                 '200':
-                    $ref: '#/components/responses/ResponseWoCreateSuccess'
+                    $ref: '#/components/responses/ResponseSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -946,7 +1008,9 @@ paths:
 
     /groups/{groupId}/wos:
         get:
-            summary: Get a list of all Work Orders.
+            summary: Get a list of all Work Orders in a Work Order Group.
+            description: |
+                Identical to GET /wos but the results are filtered to the given Work Order Group.
             tags:
                 - Work Order Groups
             security:
@@ -955,16 +1019,29 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: query
-                  name: limit
+                  name: page
+                  description: The current page number. Default 1.
                   schema:
-                      type: integer
-                      default: 20
-                      maximum: 500
-                  description: The number of workorders to return Default 20 Max 500
+                    type: integer
+                    default: 1
+                - in: query
+                  name: pageSize
+                  description: The number of workorders to return Default 20 Max 200
+                  schema:
+                    type: integer
+                    default: 20
+                    maximum: 200
+                - in: query
+                  name: sort
+                  description: The sort direction
+                  schema:
+                      type: string
+                      default: desc
+                      enum: [asc, desc]
                 - in: query
                   name: updatedFrom
                   schema:
@@ -989,13 +1066,29 @@ paths:
                       type: string
                   description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: thirdpartyRef
+                  schema:
+                      type: string
+                  description: A third party reference number to filter by
+                - in: query
+                  name: ref
+                  schema:
+                      type: string
+                  description: A reference number to filter by
+                - in: query
+                  name: ids
+                  schema:
+                      type: string
+                  example: E7rApNKbg4,Z7rApNKbg4,T7rApNKbg4
+                  description: Specific Work Order IDs to filter the results by
             responses:
                 '200':
                     $ref: '#/components/responses/ResponseWoListSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1011,7 +1104,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Group
                 - in: query
@@ -1038,8 +1131,8 @@ paths:
                     $ref: '#/components/responses/ResponseWoCreateSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1056,7 +1149,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: query
@@ -1082,8 +1175,8 @@ paths:
                                             $ref: '#/components/schemas/StatusResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1098,7 +1191,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             requestBody:
@@ -1107,7 +1200,7 @@ paths:
                         schema:
                             $ref: '#/components/schemas/StatusSchema'
             responses:
-                '201':
+                '200':
                     description: A successful operation
                     content:
                         application/json:
@@ -1123,8 +1216,8 @@ paths:
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1141,7 +1234,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: query
@@ -1168,8 +1261,8 @@ paths:
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1184,7 +1277,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             requestBody:
@@ -1205,7 +1298,7 @@ paths:
                                     description: The cost of the Brand
                                     example: 10
             responses:
-                '201':
+                '200':
                     description: A successful operation
                     content:
                         application/json:
@@ -1220,8 +1313,8 @@ paths:
                                         $ref: '#/components/schemas/ProductBrandResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1238,13 +1331,13 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: path
                   name: brandId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Brand
             requestBody:
@@ -1255,7 +1348,7 @@ paths:
                             required:
                                 - brandCost
                             properties:
-                                typeCost:
+                                brandCost:
                                     type: number
                                     format: float
                                     description: The cost of the Brand
@@ -1276,8 +1369,8 @@ paths:
                                         $ref: '#/components/schemas/ProductBrandResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1294,7 +1387,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: query
@@ -1320,8 +1413,8 @@ paths:
                                             $ref: '#/components/schemas/ProductTypeResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1337,7 +1430,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             requestBody:
@@ -1358,7 +1451,7 @@ paths:
                                     description: The cost of the Type
                                     example: 1.85
             responses:
-                '201':
+                '200':
                     description: A successful operation
                     content:
                         application/json:
@@ -1373,8 +1466,8 @@ paths:
                                         $ref: '#/components/schemas/ProductTypeResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1391,13 +1484,13 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: path
                   name: typeId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Type
             requestBody:
@@ -1405,8 +1498,6 @@ paths:
                     application/json:
                         schema:
                             type: object
-                            required:
-                                - typeCost
                             properties:
                                 typeCost:
                                     type: number
@@ -1429,8 +1520,8 @@ paths:
                                         $ref: '#/components/schemas/ProductTypeResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1447,7 +1538,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: query
@@ -1473,8 +1564,8 @@ paths:
                                             $ref: '#/components/schemas/ProductModelResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1485,6 +1576,13 @@ paths:
                 - Work Order Group Products
             security:
                 - bearerAuth: []
+            parameters:
+                - in: path
+                  name: groupId
+                  schema:
+                      type: string
+                  required: true
+                  description: The UID of the Work Order Group
             requestBody:
                 required: true
                 content:
@@ -1495,6 +1593,7 @@ paths:
                                 - modelName
                                 - typeId
                                 - brandId
+                                - modelCost
                             properties:
                                 modelName:
                                     type: string
@@ -1508,8 +1607,13 @@ paths:
                                     type: string
                                     description: The id of the product brand
                                     example: 'E7rApNKbg4'
+                                modelCost:
+                                    type: number
+                                    format: float
+                                    description: The cost of the Model
+                                    example: 1.85
             responses:
-                '201':
+                '200':
                     description: A successful operation
                     content:
                         application/json:
@@ -1541,8 +1645,8 @@ paths:
                                                 example: E7rApNKbg4
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1559,13 +1663,13 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
                 - in: path
                   name: modelId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Model
             requestBody:
@@ -1597,8 +1701,8 @@ paths:
                                         $ref: '#/components/schemas/ProductModelResponseSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1615,7 +1719,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             responses:
@@ -1637,8 +1741,8 @@ paths:
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1653,7 +1757,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             requestBody:
@@ -1663,7 +1767,7 @@ paths:
                         schema:
                             type: object
                             required:
-                                - faultAreaId
+                                - faultAreaName
                                 - faultSymptomName
                             properties:
                                 faultAreaName:
@@ -1675,7 +1779,7 @@ paths:
                                     description: The name of the Fault Symptom
                                     example: 'My Fault Symptom'
             responses:
-                '201':
+                '200':
                     description: A successful operation
                     content:
                         application/json:
@@ -1691,8 +1795,8 @@ paths:
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1709,7 +1813,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             responses:
@@ -1731,8 +1835,8 @@ paths:
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1747,7 +1851,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             requestBody:
@@ -1764,7 +1868,7 @@ paths:
                                     description: The name of the Fault Action
                                     example: 'My Fault Action'
             responses:
-                '201':
+                '200':
                     description: A successful operation
                     content:
                         application/json:
@@ -1780,8 +1884,8 @@ paths:
 
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1798,20 +1902,9 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
-                - in: query
-                  name: mode
-                  schema:
-                      type: string
-                      enum: [all, queue, create]
-                  description: |
-                      **all** = If it is possible to create it in real-time a 201 response is returned, otherwise it is queued and a 202 response is returned.
-
-                      **queue** = The Work Order is queued and a 202 response is returned.
-
-                      **create** = The Work Order is created in real-time and a 201 response is returned. If it is not possible to create it in real-time a 400 response is returned.
             requestBody:
                 required: true
                 content:
@@ -1829,6 +1922,7 @@ paths:
                                         Case:
                                             type: object
                                             required:
+                                                - Id
                                                 - ProductDescription
                                                 - ProductGroup
                                                 - ProductBrand
@@ -1838,13 +1932,15 @@ paths:
                                                 - LastName
                                                 - Email
                                                 - Phone
-                                                - AltPhone
                                                 - Address
                                                 - Suburb
-                                                - Postcode
-                                                - DateofPurchase
+                                                - State
+                                                - PostCode
+                                                - DateOfPurchase
                                                 - FaultCode
                                             properties:
+                                                Id:
+                                                    type: string
                                                 ProductDescription:
                                                     type: string
                                                 ProductGroup:
@@ -1869,9 +1965,11 @@ paths:
                                                     type: string
                                                 Suburb:
                                                     type: string
-                                                Postcode:
+                                                State:
+                                                    type: string
+                                                PostCode:
                                                     type: integer
-                                                DateofPurchase:
+                                                DateOfPurchase:
                                                     type: string
                                                 FaultCode:
                                                     type: string
@@ -1882,8 +1980,8 @@ paths:
                     $ref: '#/components/responses/ResponseWoCreateSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -1900,7 +1998,7 @@ paths:
                 - in: path
                   name: groupId
                   schema:
-                      type: integer
+                      type: string
                   required: true
                   description: The UID of the Work Order Group
             requestBody:
@@ -1990,9 +2088,9 @@ paths:
                                     required:
                                         - make
                                         - model
+                                        - description
                                         - serialNumber
                                         - purchaseDate
-                                        - retailer
                                     properties:
                                         make:
                                             type: string
@@ -2023,8 +2121,8 @@ paths:
                     $ref: '#/components/responses/ResponseWoCreateSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2058,8 +2156,8 @@ paths:
                                             $ref: '#/components/schemas/InventorySupplierGetSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2090,8 +2188,8 @@ paths:
                                             $ref: '#/components/schemas/InventoryFactoryGetSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2122,8 +2220,8 @@ paths:
                                             $ref: '#/components/schemas/InventoryWarehouseGetSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2159,8 +2257,8 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryPurchaseOrderSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2230,7 +2328,7 @@ paths:
                   name: status
                   schema:
                       type: string
-                      enum: [pending, awaiting_shipment, left_factory, stock_received]
+                      enum: [pending, awaiting_shipment, left_factory, partially_received, received]
                   description: The status of the purchase order
                   example: "pending"
 
@@ -2249,7 +2347,7 @@ paths:
                                     data:
                                         type: object
                                         properties:
-                                            resultsCount:
+                                            totalCount:
                                                 type: integer
                                                 description: The total number of results, ignoring the limit
                                                 example: 100
@@ -2271,8 +2369,8 @@ paths:
                                                     $ref: '#/components/schemas/InventoryPurchaseOrderGetSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2311,8 +2409,8 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryPurchaseOrderSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2341,14 +2439,14 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryPurchaseOrderSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
                     $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
         
-    /inventory/suppliers/{supplierId}/purchase-orders/{purchaseOrderId}/item/{itemId}:
+    /inventory/suppliers/{supplierId}/purchase-orders/{purchaseOrderId}/items/{itemId}:
         patch:
             summary: Update a Purchase Order Item
             security:
@@ -2373,8 +2471,8 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: The UID of the Supplier Purchase Order Item
-            
+                  description: The UID of the Supplier Item (the `item.itemId` from the Purchase Order response)
+
             requestBody:
                 required: true
                 content:
@@ -2387,8 +2485,8 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryPurchaseOrderItemSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2425,8 +2523,8 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryOrderSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2438,13 +2536,13 @@ paths:
             tags:
                 - Inventory Supplier Orders
             parameters:
-                - in: query
+                - in: path
                   name: supplierId
                   required: true
                   schema:
                       type: string
                   description: The UID of the Supplier
-                
+
                 - in: query
                   name: page
                   description: The current page number. Default 1.
@@ -2512,7 +2610,7 @@ paths:
                                     data:
                                         type: object
                                         properties:
-                                            resultsCount:
+                                            totalCount:
                                                 type: integer
                                                 description: The total number of results, ignoring the limit
                                                 example: 100
@@ -2534,8 +2632,8 @@ paths:
                                                     $ref: '#/components/schemas/InventoryOrderGetSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2572,8 +2670,8 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryOrderSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2584,20 +2682,33 @@ paths:
               - bearerAuth: []
             tags:
                 - Inventory Supplier Orders
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: path
+                  name: orderId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier Order
             responses:
                 '200': 
                     $ref: '#/components/responses/ResponseInventoryOrderSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
                     $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
 
-    /inventory/suppliers/{supplierId}/orders/{orderId}/item/{itemId}:
+    /inventory/suppliers/{supplierId}/orders/{orderId}/items/{itemId}:
         patch:
             summary: Update an Order Item
             security:
@@ -2622,22 +2733,22 @@ paths:
                   required: true
                   schema:
                       type: string
-                  description: The UID of the Supplier Purchase Order Item
-            
+                  description: The UID of the Supplier Item (the `item.itemId` from the Order response)
+
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/InventoryOrderItemPatchSchema'
-            
+
             responses:
-                '200': 
-                    $ref: '#/components/responses/ResponseInventoryOrderItemSuccess'
+                '200':
+                    $ref: '#/components/responses/ResponseInventoryOrderSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2666,14 +2777,14 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/InventoryItemPostSingleSchema'
+                            $ref: '#/components/schemas/InventoryItemPostSchema'
             responses:
                 '200': 
                     $ref: '#/components/responses/ResponseInventoryItemSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2753,7 +2864,7 @@ paths:
                                     data:
                                         type: object
                                         properties:
-                                            resultsCount:
+                                            totalCount:
                                                 type: integer
                                                 description: The total number of results, ignoring the limit
                                                 example: 100
@@ -2776,8 +2887,8 @@ paths:
            
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2815,8 +2926,8 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryItemSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2848,8 +2959,8 @@ paths:
                     $ref: '#/components/responses/ResponseInventoryItemSuccess'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -2934,8 +3045,8 @@ paths:
                                                    $ref: '#/components/schemas/InventoryStockReportItemSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -3020,8 +3131,8 @@ paths:
                                                    $ref: '#/components/schemas/InventoryStockReportItemSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -3120,8 +3231,8 @@ paths:
                                                    $ref: '#/components/schemas/InventoryStockMovementSchema'
                 '400':
                     $ref: '#/components/responses/ResponseErrorBadRequest'
-                '405':
-                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '500':
+                    $ref: '#/components/responses/ResponseErrorInternal'
                 '401':
                     $ref: '#/components/responses/ResponseErrorUnauthorized'
                 '429':
@@ -3152,19 +3263,32 @@ components:
                                 description: Whether the request was successful
                                 example: true
                             data:
+                                $ref: '#/components/schemas/TokenSchema'
+
+        ResponseTokenAll:
+            description: New Token Response with User details and permissions
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: true
+                            data:
                                 type: object
                                 required:
+                                    - authConfig
                                     - userId
                                     - username
                                     - name
                                     - email
-                                    - authConfig
-                                    - authConfig.accessToken
-                                    - authConfig.accessExpiresAt
-                                    - authConfig.refreshToken
-                                    - authConfig.refreshExpiresAt
+                                    - phone
                                     - permissions
                                 properties:
+                                    authConfig:
+                                        $ref: '#/components/schemas/TokenSchema'
                                     userId:
                                         type: string
                                         description: The user UID
@@ -3181,29 +3305,14 @@ components:
                                         type: string
                                         description: The user's email
                                         example: 'john@smith.com'
+                                    phone:
+                                        type: string
+                                        description: The user's phone number
+                                        example: '1234567890'
                                     permissions:
                                         type: array
                                         items:
                                             $ref: '#/components/schemas/PermissionResponseSchema'
-                                    authConfig:
-                                        type: object
-                                        properties:
-                                            accessToken:
-                                                type: string
-                                                description: Your new token
-                                                example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
-                                            accessExpiresAt:
-                                                type: string
-                                                description: ISO-8601 date - When the token will expire
-                                                example: "2022-04-10T14:30:00+02:00"
-                                            refreshToken:
-                                                type: string
-                                                description: Your new token
-                                                example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
-                                            refreshExpiresAt:
-                                                type: string
-                                                description: ISO-8601 date -  When the token will expire
-                                                example: "2022-04-10T14:30:00+02:00"
 
         ResponseSuccess:
             description: A successful operation
@@ -3211,16 +3320,21 @@ components:
                 application/json:
                     schema:
                         type: object
-                        description: A success response Object
+                        description: A success response Object. `data` is always present and is an empty array when there is nothing to return.
                         properties:
                             success:
                                 type: boolean
                                 description: Whether the request was successful
                                 example: true
+                            data:
+                                type: array
+                                description: Always present - an empty array when there is nothing to return
+                                items: {}
+                                example: []
 
         ResponseWoCreateSuccess:
             description: |
-                Work Order accepted for creation success. 
+                Work Order accepted for creation success.
 
                 The information supplied is valid but a Work Order can't be created automatically in real-time because the product information supplied cannot be automaticaly matched to the information in the system.
 
@@ -3229,12 +3343,17 @@ components:
                 application/json:
                     schema:
                         type: object
-                        description: A success response Object
+                        description: A success response Object. `data` is always present and is an empty array when there is nothing to return.
                         properties:
                             success:
                                 type: boolean
                                 description: Whether the request was successful
                                 example: true
+                            data:
+                                type: array
+                                description: Always present - an empty array when there is nothing to return
+                                items: {}
+                                example: []
 
         ResponseWoSuccess:
             description: A successful Work Order operation
@@ -3278,7 +3397,10 @@ components:
                                 $ref: '#/components/schemas/WoStatsResponseSchema'
 
         ResponseErrorBadRequest:
-            description: The request is malformed and needs to be fixed
+            description: |
+                The request is malformed and needs to be fixed.
+
+                Requests to an unknown path, or to a known path with the wrong method, also return 400 with the error `Unknown action (METHOD:path)`.
             content:
                 application/json:
                     schema:
@@ -3291,12 +3413,25 @@ components:
                     schema:
                         $ref: '#/components/schemas/ErrorSchema'
 
-        ResponseMethodNotAllowed:
-            description: The request is to a non existant endpoint or is using the wrong method
+        ResponseErrorInternal:
+            description: An unexpected internal error occurred
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/ErrorSchema'
+                        type: object
+                        description: An internal error response Object
+                        properties:
+                            success:
+                                type: boolean
+                                description: Whether the request was successful
+                                example: false
+                            data:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        description: The error message
+                                        example: Internal system error
 
         ResponseErrorRateLimitExceeded:
             description: |
@@ -3361,20 +3496,6 @@ components:
                             data:
                                 $ref: '#/components/schemas/InventoryOrderGetSchema'
         
-        ResponseInventoryOrderItemSuccess:
-            description: A successful Inventory Order operation
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            success:
-                                type: boolean
-                                description: Whether the request was successful
-                                example: true
-                            data:
-                                $ref: '#/components/schemas/InventoryOrderItemGetSchema'
-
         ResponseInventoryPurchaseOrderSuccess:
             description: A successful Inventory Purchase Order operation
             content:
@@ -3459,20 +3580,51 @@ components:
                           type: number
                           example: '153.031'
 
+        TokenSchema:
+            type: object
+            required:
+                - accessToken
+                - accessExpiresAt
+                - refreshToken
+                - refreshExpiresAt
+            properties:
+                accessToken:
+                    type: string
+                    description: Your new token
+                    example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
+                accessExpiresAt:
+                    type: string
+                    description: ISO-8601 date - When the token will expire
+                    example: "2022-04-10T14:30:00+02:00"
+                refreshToken:
+                    type: string
+                    description: Your new token
+                    example: BqdmioqjlgaSBTIarf8coYFhZfBeqCn82AulZVEkbPdNIVYaa6ny43P4iriJ4FR7gmtgi8AtXOhGKfRVmfuqijvBLOkQtcXKyq0QyBkwqCdaR55dkzEDTaeFYyvsLtcj
+                refreshExpiresAt:
+                    type: string
+                    description: ISO-8601 date -  When the token will expire
+                    example: "2022-04-10T14:30:00+02:00"
+
         ChargeSchema:
             type: object
+            required:
+                - chargeDescription
             properties:
                 chargeDescription:
                     type: string
-                    description: The description of the charge charge
+                    description: The description of the charge
                     example: 'My Description'
                 chargeQuantity:
                     type: integer
-                    description: The quantity of the charge
+                    description: The quantity of the charge. Default 1.
                     example: 1
                 chargeUnitPrice:
                     type: number
-                    description: The unit price of the charge
+                    description: The unit price of the charge. Default 0.
+                    example: 1.00
+                chargeRrp:
+                    type: number
+                    description: The RRP of the charge
                     example: 1.00
 
                 chargeType:
@@ -3494,21 +3646,31 @@ components:
                         - Manual Mileage
 
         ChargeResponseSchema:
-            allOf:
-                - $ref: '#/components/schemas/ChargeSchema'
-                - type: object
-                  required:
-                      - chargeDescription
-                      - chargeCode
-                  properties:
-                      chargeTotalPrice:
-                          type: number
-                          description: The chargeQuantity * chargeUnitPrice
-                          example: 1.00
-                      chargeId:
-                          type: string
-                          description: The UID of the charge charge
-                          example: E7rApNKbg4
+            type: object
+            required:
+                - chargeId
+                - chargeDescription
+            properties:
+                chargeId:
+                    type: string
+                    description: The UID of the charge
+                    example: E7rApNKbg4
+                chargeDescription:
+                    type: string
+                    description: The description of the charge
+                    example: 'My Description'
+                chargeQuantity:
+                    type: integer
+                    description: The quantity of the charge
+                    example: 1
+                chargeUnitPrice:
+                    type: number
+                    description: The unit price of the charge
+                    example: 1.00
+                chargeType:
+                    type: string
+                    description: The name of the charge type
+                    example: Repair
         ContactPostSchema:
             type: object
             properties:
@@ -3552,6 +3714,28 @@ components:
                       address:
                           $ref: '#/components/schemas/AddressResponseSchema'
 
+        SimpleContactResponseSchema:
+            type: object
+            description: A simple contact - used for the delivery, location and groupScheme contacts on a Work Order.
+            required:
+                - id
+                - name
+            properties:
+                id:
+                    type: string
+                    example: 'E7rApNKbg4'
+                name:
+                    type: string
+                    example: 'John Smith'
+                address:
+                    $ref: '#/components/schemas/AddressResponseSchema'
+                phone:
+                    type: string
+                    example: '89349393'
+                email:
+                    type: string
+                    example: 'email1@email.com'
+
         ErrorSchema:
             type: object
             description: An error response Object
@@ -3560,90 +3744,143 @@ components:
                     type: boolean
                     description: Whether the request was successful
                     example: false
-                error:
-                    type: string
-                    description: The error message
-                    example: Error description message text
-                errors:
-                    nullable: true
-                    type: array
-                    items:
-                        type: string
-                        description: The specific error messages
+                data:
+                    type: object
+                    required:
+                        - error
+                    properties:
+                        error:
+                            type: string
+                            description: The error message
+                            example: Error description message text
+                        errors:
+                            type: object
+                            description: Only present on validation errors - a map of field name to its specific error message
+                            additionalProperties:
+                                type: string
+                            example:
+                                thirdpartyRef: 'Must be at least 5 characters'
 
-        FaultAreaSchema:
+        FaultSymptomResponseSchema:
             type: object
             properties:
-                FaultAreaName:
+                faultAreaId:
+                    type: string
+                    description: The Fault Area UID
+                    example: E7rApNKbg4
+                faultAreaName:
                     type: string
                     description: The Fault Area Name
                     example: 'My Fault Area'
-
-        FaultAreaResponseSchema:
-            allOf:
-                - $ref: '#/components/schemas/FaultAreaSchema'
-                - type: object
-                  properties:
-                      FaultAreaName:
-                          type: string
-                          description: The Fault Area Name
-                          example: 'My Fault Area'
-                      FaultAreaId:
-                          type: string
-                          description: The Fault Area UID
-                          example: E7rApNKbg4
-
-        FaultSymptomSchema:
-            type: object
-            properties:
-                FaultSymptomName:
+                faultSymptomId:
+                    type: string
+                    description: The Fault Symptom UID
+                    example: E7rApNKbg4
+                faultSymptomName:
                     type: string
                     description: The Fault Symptom Name
                     example: 'My Fault Symptom'
 
-        FaultSymptomResponseSchema:
-            allOf:
-                - $ref: '#/components/schemas/FaultSymptomSchema'
-                - type: object
-                  properties:
-                      faultSymptomId:
-                          type: string
-                          description: The Fault Symptom UID
-                          example: E7rApNKbg4
-
-        FaultActionSchema:
+        FaultActionResponseSchema:
             type: object
             properties:
-                FaultActionName:
+                faultActionId:
+                    type: string
+                    description: The Fault Action UID
+                    example: E7rApNKbg4
+                faultActionName:
                     type: string
                     description: The Fault Action Name
                     example: 'My Fault Action'
 
-        FaultActionResponseSchema:
-            allOf:
-                - $ref: '#/components/schemas/FaultActionSchema'
-                - type: object
-                  properties:
-                      faultActionId:
-                          type: string
-                          description: The Fault Action UID
-                          example: E7rApNKbg4
-
         FaulAreaSymptomResponseSchema:
-            allOf:
-                - $ref: '#/components/schemas/FaultAreaResponseSchema'
-                - $ref: '#/components/schemas/FaultSymptomResponseSchema'
+            type: object
+            properties:
+                faultAreaId:
+                    type: string
+                    description: The Fault Area UID
+                    example: E7rApNKbg4
+                faultAreaName:
+                    type: string
+                    description: The Fault Area Name
+                    example: 'My Fault Area'
+                symptomId:
+                    type: string
+                    description: The Fault Symptom UID
+                    example: E7rApNKbg4
+                symptomName:
+                    type: string
+                    description: The Fault Symptom Name
+                    example: 'My Fault Symptom'
 
         WoProductFaultSchema:
-            allOf:
-                - $ref: '#/components/schemas/FaultAreaResponseSchema'
-                - $ref: '#/components/schemas/FaultSymptomResponseSchema'
-                - $ref: '#/components/schemas/FaultActionResponseSchema'
-                - type: object
-                  properties:
-                      faultDescription:
-                          type: string
-                          example: 'My Fault Description'
+            type: object
+            description: |
+                A product fault. Either the ids or the names may be supplied - ids take precedence.
+            properties:
+                faultAreaId:
+                    type: string
+                    description: The Fault Area UID
+                    example: E7rApNKbg4
+                faultAreaName:
+                    type: string
+                    description: The Fault Area Name
+                    example: 'My Fault Area'
+                faultSymptomId:
+                    type: string
+                    description: The Fault Symptom UID
+                    example: E7rApNKbg4
+                faultSymptomName:
+                    type: string
+                    description: The Fault Symptom Name
+                    example: 'My Fault Symptom'
+                faultActionId:
+                    type: string
+                    description: The Fault Action UID
+                    example: E7rApNKbg4
+                faultActionName:
+                    type: string
+                    description: The Fault Action Name
+                    example: 'My Fault Action'
+                faultDescription:
+                    type: string
+                    example: 'My Fault Description'
+
+        WoProductFaultResponseSchema:
+            type: object
+            description: |
+                The product fault. Keys are omitted when the corresponding value is not set on the Work Order.
+            properties:
+                faultAreaId:
+                    type: string
+                    description: The Fault Area UID
+                    example: E7rApNKbg4
+                faultAreaName:
+                    type: string
+                    description: The Fault Area Name
+                    example: 'My Fault Area'
+                faultSymptomId:
+                    type: string
+                    description: The Fault Symptom UID
+                    example: E7rApNKbg4
+                faultSymptomName:
+                    type: string
+                    description: The Fault Symptom Name
+                    example: 'My Fault Symptom'
+                faultActionId:
+                    type: string
+                    description: The Fault Action UID
+                    example: E7rApNKbg4
+                faultActionName:
+                    type: string
+                    description: The Fault Action Name
+                    example: 'My Fault Action'
+                faultDescription:
+                    type: string
+                    example: 'My Fault Description'
+                faultCode:
+                    type: string
+                    example: 'F123'
 
         LogSchema:
             type: object
@@ -3656,6 +3893,9 @@ components:
                     example: 'My Log'
 
         LogResponseSchema:
+            description: |
+                A Work Order log entry as nested in the full Work Order response `logs` array.
+                The standalone log endpoints (GET/POST /wos/{woId}/logs) use WoLogResponseSchema instead.
             allOf:
                 - $ref: '#/components/schemas/LogSchema'
                 - type: object
@@ -3678,16 +3918,40 @@ components:
                           example: '2021-04-10T14:30:00+02:00'
                       logCreatedBy:
                           type: string
-                          description: The user who created the log
-                          example: 'John Doe'
+                          description: The encoded UID of the user who created the log
+                          example: E7rApNKbg4
+
+        WoLogResponseSchema:
+            type: object
+            required:
+                - logId
+                - logDate
+                - logContent
+                - logType
+            properties:
+                logId:
+                    type: string
+                    description: The Log UID
+                    example: E7rApNKbg4
+                logDate:
+                    type: string
+                    description: ISO-8601 date - The date the log was created
+                    example: '2021-04-10T14:30:00+02:00'
+                logContent:
+                    type: string
+                    description: The log content
+                    example: 'My Log'
+                logType:
+                    type: string
+                    description: The type of the log entry
+                    enum: [system, notification]
+                    example: system
 
         PartItemSchema:
             type: object
             required:
                 - partCode
                 - partDescription
-                - partQuantity
-                - partType
             properties:
                 partCode:
                     type: string
@@ -3711,9 +3975,6 @@ components:
                     format: float
                     description: The cost of the item
                     example: 5.99
-                partType:
-                    type: string
-                    enum: [inventory, part]
 
         PartItemResponseSchema:
             allOf:
@@ -3724,12 +3985,17 @@ components:
                           type: string
                           description: The UID of the part
                           example: E7rApNKbg4
+                      partType:
+                          type: string
+                          description: The type of the part. Manually added parts are `part`, inventory items are `inventory`.
+                          enum: [inventory, part]
+                          example: part
 
         PermissionResponseSchema:
             type: object
             properties:
                 permissionId:
-                    type: integer
+                    type: string
                     description: The Permission UID
                     example: E7rApNKbg4
                 permissionName:
@@ -3777,7 +4043,7 @@ components:
             type: object
             properties:
                 typeId:
-                    type: integer
+                    type: string
                     description: The Type UID
                     example: E7rApNKbg4
                 typeName:
@@ -3789,7 +4055,7 @@ components:
                     description: The Type Cost
                     example: 100
                 brandId:
-                    type: integer
+                    type: string
                     description: The Brand UID
                     example: E7rApNKbg4
                 brandName:
@@ -3801,7 +4067,7 @@ components:
                     description: The Brand Cost
                     example: 100
                 modelId:
-                    type: integer
+                    type: string
                     description: The Model UID
                     example: E7rApNKbg4
                 modelName:
@@ -3844,25 +4110,39 @@ components:
         ProductSchema:
             type: object
             description: |
-                A product, either a valid product model id must be supplied by querying GET:/groups/{groupId}/productModels 
-                or the system will try to automaticlly match up the model from the productModelName
+                A product, either a valid product model id must be supplied by querying GET:/groups/{groupId}/product-models
+                or the system will try to automaticlly match up the model from the modelName
 
-                #### either productModelId or productModelName must be supplied
+                #### either modelId or modelName must be supplied
             properties:
-                productModelId:
+                modelId:
                     type: string
                     description: The Model UID
                     example: E7rApNKbg4
-                productModelName:
+                modelName:
                     type: string
                     example: 'MODEL123'
-                productDescription:
+                typeId:
+                    type: string
+                    description: The Type UID
+                    example: E7rApNKbg4
+                typeName:
+                    type: string
+                    example: 'My Type'
+                brandId:
+                    type: string
+                    description: The Brand UID
+                    example: E7rApNKbg4
+                brandName:
+                    type: string
+                    example: 'My Brand'
+                description:
                     type: string
                     example: 'My Product Description'
-                productSerial:
+                serial:
                     type: string
                     example: 'abc123'
-                productPurchasedAt:
+                purchasedAt:
                     type: string
                     description: ISO-8601 date - The date of the purchase
                     example: "2022-04-10T14:30:00+02:00"
@@ -3872,10 +4152,7 @@ components:
         ProductPatchSchema:
             type: object
             description: |
-                A product, either a valid product model id must be supplied by querying GET:/groups/{groupId}/productModels 
-                or the system will try to automaticlly match up the model from the productModelName
-
-                #### either productModelId or productModelName must be supplied
+                Updatable product properties of a Work Order.
             properties:
                 productDescription:
                     type: string
@@ -3893,10 +4170,12 @@ components:
 
         ProductResponseSchema:
             type: object
+            description: |
+                The product on a Work Order. `null` for install Work Orders.
+                The `modelId`, `modelName` and `modelCost` keys are omitted when no model is set.
+            nullable: true
             required:
                 - productId
-                - modelId
-                - modelName
                 - typeId
                 - typeName
                 - brandId
@@ -3905,26 +4184,50 @@ components:
                 productId:
                     type: string
                     example: 'E7rApNKbg4'
-                modelId:
-                    type: string
-                    example: 'E7rApNKbg4'
-                modelName:
-                    type: string
-                    example: 'My Model'
                 typeId:
                     type: string
                     example: 'E7rApNKbg4'
                 typeName:
                     type: string
                     example: 'My Type'
+                typeCost:
+                    type: number
+                    description: The Type Cost
+                    example: 5.99
                 brandId:
                     type: string
                     example: 'E7rApNKbg4'
                 brandName:
                     type: string
                     example: 'My Brand'
+                brandCost:
+                    type: number
+                    description: The Brand Cost
+                    example: 5.99
+                modelId:
+                    type: string
+                    description: Omitted when no model is set
+                    example: 'E7rApNKbg4'
+                modelName:
+                    type: string
+                    description: Omitted when no model is set
+                    example: 'My Model'
+                modelCost:
+                    type: number
+                    description: Omitted when no model is set
+                    example: 100
+                serial:
+                    type: string
+                    example: 'abc123'
+                description:
+                    type: string
+                    example: 'My Product Description'
+                purchasedAt:
+                    type: string
+                    description: ISO-8601 date - The date of the purchase
+                    example: "2022-04-10T14:30:00+02:00"
                 fault:
-                    $ref: '#/components/schemas/WoProductFaultSchema'
+                    $ref: '#/components/schemas/WoProductFaultResponseSchema'
 
         EventResponseSchema:
             type: object
@@ -4007,9 +4310,73 @@ components:
         StatusSchema:
             type: object
             required:
+                - statusName
+                - statusType
+            properties:
+                statusName:
+                    type: string
+                    example: 'My Status'
+                statusType:
+                    type: string
+                    description: The status Type
+                    example: 'Open'
+                    enum:
+                        - Open
+                        - Closed
+                        - Cancelled
+                        - Invoiced
+                        - Estimate
+
+        StatusResponseSchema:
+            type: object
+            required:
+                - statusId
+                - statusName
+                - statusType
+            properties:
+                statusId:
+                    type: string
+                    description: The Status UID
+                    example: 'E7rApNKbg4'
+                statusName:
+                    type: string
+                    example: 'My Status'
+                statusType:
+                    type: string
+                    description: The status Type
+                    example: 'Open'
+                    enum:
+                        - Open
+                        - Closed
+                        - Cancelled
+                        - Invoiced
+                        - Estimate
+
+        WoAvailableStatusSchema:
+            type: object
+            required:
+                - statusId
+                - statusName
+            properties:
+                statusId:
+                    type: string
+                    description: The Status UID
+                    example: 'E7rApNKbg4'
+                statusName:
+                    type: string
+                    example: 'My Status'
+
+        WoStatusInfoSchema:
+            type: object
+            required:
+                - id
                 - name
                 - type
             properties:
+                id:
+                    type: string
+                    description: The Status UID
+                    example: 'E7rApNKbg4'
                 name:
                     type: string
                     example: 'My Status'
@@ -4023,18 +4390,6 @@ components:
                         - Cancelled
                         - Invoiced
                         - Estimate
-                        - On Hold
-
-        StatusResponseSchema:
-            allOf:
-                - $ref: '#/components/schemas/StatusSchema'
-                - type: object
-                  required:
-                      - id
-                  properties:
-                      id:
-                          type: string
-                          example: 'E7rApNKbg4'
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Purchase Order
 
@@ -4073,10 +4428,13 @@ components:
 
         InventoryPurchaseOrderPostSchema:
             type: object
+            required:
+                - type
+                - factoryId
+                - ident
             properties:
                 type:
                     type: string
-                    default: new_order
                     enum: [new_order, replenishment, mixed]
                     description: The type of the purchase order
                 warehouseId:
@@ -4127,15 +4485,18 @@ components:
                     purchaseOrderId:
                         type: string
                         description: The UID of the Purchase Order
+                    supplierId:
+                        type: string
+                        description: The UID of the Supplier
                     status:
                         type: string
-                        enum: [pending, awaiting_shipment, left_factory, stock_received]
+                        enum: [pending, awaiting_shipment, left_factory, partially_received, received]
                     nextStatus:
                         type: array
-                        example: [pending, awaiting_shipment, left_factory, stock_received]
+                        example: [pending, awaiting_shipment, left_factory, partially_received, received]
                         items: 
                             type: string
-                            enum: [pending, awaiting_shipment, left_factory, stock_received]
+                            enum: [pending, awaiting_shipment, left_factory, partially_received, received]
                     items:
                         type: array
                         items:
@@ -4151,7 +4512,7 @@ components:
                 status:
                     type: string
                     description: The status of the order
-                    enum: [pending, awaiting_shipment, left_factory, stock_received]
+                    enum: [pending, awaiting_shipment, left_factory, partially_received, received]
                 containerRef:
                     type: string
                     description: The reference number of the container
@@ -4230,8 +4591,6 @@ components:
             type: object
             required:
                 - ref
-                - sender
-                - recipient
             properties:
                 warehouseId:
                     type: string
@@ -4241,22 +4600,28 @@ components:
                     description: The reference number of the order
                 sender:
                     type: object
+                    description: Optional - when supplied, `name` is required.
+                    required:
+                        - name
                     properties:
-                        name: 
+                        name:
                             type: string
                             example: 'John Smith'
-                        address: 
+                        address:
                             $ref: '#/components/schemas/AddressSchema'
                 recipient:
                     type: object
+                    description: Optional - when supplied, `name` is required.
+                    required:
+                        - name
                     properties:
-                        name: 
+                        name:
                             type: string
                             example: 'John Smith'
-                        companyName: 
+                        companyName:
                             type: string
                             example: 'ABC Company'
-                        address: 
+                        address:
                             $ref: '#/components/schemas/AddressSchema'
                 shippingNote:
                     type: string
@@ -4276,14 +4641,38 @@ components:
                         type: string
                         description: The UID of the Order
                     status:
-                        type: string
-                        enum: [open, dispatch_ready, pickup_booked, dispatched, complete, cancelled]
+                        type: integer
+                        description: |
+                            The status code of the order:
+                            1 = open, 16 = dispatch_ready, 64 = pickup_booked, 32 = dispatched, 4 = complete, 8 = cancelled
+                        enum: [1, 4, 8, 16, 32, 64]
+                        example: 1
                     nextStatus:
                         type: array
+                        description: The status labels the order can move to from its current status
                         example: [open, dispatch_ready, cancelled]
-                        items: 
+                        items:
                             type: string
-                            enum: [open, dispatch_ready, cancelled]
+                            enum: [open, dispatch_ready, pickup_booked, dispatched, complete, cancelled]
+                    sender:
+                        type: object
+                        properties:
+                            name:
+                                type: string
+                                example: 'John Smith'
+                            address:
+                                $ref: '#/components/schemas/AddressResponseSchema'
+                    recipient:
+                        type: object
+                        properties:
+                            name:
+                                type: string
+                                example: 'John Smith'
+                            companyName:
+                                type: string
+                                example: 'ABC Company'
+                            address:
+                                $ref: '#/components/schemas/AddressResponseSchema'
                     createdAt:
                         type: string
                         description: ISO-8601 date - The date of creation
@@ -4309,6 +4698,9 @@ components:
                     description: The reference number of the order
                 sender:
                     type: object
+                    description: Optional - when supplied, `name` is required.
+                    required:
+                        - name
                     properties:
                         name:
                             type: string
@@ -4317,6 +4709,9 @@ components:
                             $ref: '#/components/schemas/AddressSchema'
                 recipient:
                     type: object
+                    description: Optional - when supplied, `name` is required.
+                    required:
+                        - name
                     properties:
                         name:
                             type: string
@@ -4332,6 +4727,8 @@ components:
 
         InventoryOrderItemPatchSchema:
             type: object
+            required:
+                - qty
             properties:
                 qty:
                     type: integer
@@ -4438,10 +4835,8 @@ components:
         
         InventoryItemPostSchema:
             type: object
-            required: 
+            required:
                 - ident
-                - descrip
-                - factoryId
             properties:
                 warehouseId:
                     type: string
@@ -4466,30 +4861,43 @@ components:
                     description: The barcode of the item
                 bestBeforeAt:
                     type: string
-                    description: ISO-8601 date - The date of creation
-                    example: "2022-04-10T14:30:00+02:00"
+                    description: Y-m-d date - The best before date of the item
+                    example: "2022-04-10"
+                qtyStock:
+                    type: integer
+                    description: The quantity of the item in stock or to be added to stock
+                    default: 0
+                    example: 1
 
-
-        InventoryItemPostSingleSchema:
-            allOf:
-                - $ref: '#/components/schemas/InventoryItemPostSchema'
-                - type: object
-                  properties:
-                    
-                      qtyStock:
-                          type: integer
-                          description: The quantity of the item in stock or to be added to stock
-                          default: 0
-                          example: 1
-        
         InventoryItemGetSchema:
-            allOf:
-                - $ref: '#/components/schemas/InventoryItemPostSchema'
-                - type: object
-                  properties:
-                      itemId:
-                          type: string
-                          description: The UID of the Item
+            type: object
+            properties:
+                itemId:
+                    type: string
+                    description: The UID of the Item
+                ident:
+                    type: string
+                    description: The ident of the item
+                factoryRef:
+                    type: string
+                    description: The factory ident of the item
+                thirdpartyRef:
+                    type: string
+                    description: The thirdparty ident of the item
+                descrip:
+                    type: string
+                    description: The description of the item
+                barcode:
+                    type: string
+                    description: The barcode of the item
+                bestBeforeAt:
+                    type: string
+                    description: ISO-8601 date - The best before date of the item
+                    example: "2022-04-10T14:30:00+02:00"
+                qtyStock:
+                    type: number
+                    description: The current stock quantity of the item
+                    example: 1
         
         InventoryItemPatchSchema:
             type: object
@@ -4640,9 +5048,6 @@ components:
                 delayRef:
                     type: string
                     example: 'mydelayref'
-                invoiceRef:
-                    type: string
-                    example: 'myinvoiceref'
                 raRef:
                     type: string
                     example: 'myraref'
@@ -4668,7 +5073,6 @@ components:
                 - type: object
                   required:
                       - thirdpartyRef
-                      - product
                   properties:
                       thirdpartyRef:
                           type: string
@@ -4704,6 +5108,18 @@ components:
                 raReason:
                     type: string
                     example: 'myrareason'
+                productRef:
+                    type: string
+                    example: 'myproductref'
+                stockRef:
+                    type: string
+                    example: 'mystockref'
+                stockInboundRef:
+                    type: string
+                    example: 'mystockinboundref'
+                stockOutboundRef:
+                    type: string
+                    example: 'mystockoutboundref'
                 descrip:
                     type: string
                     example: 'mydescrip'
@@ -4716,15 +5132,21 @@ components:
                         - type: object
                           properties:
                               fault:
-                                  $ref: '#/components/schemas/WoProductFaultSchema'
+                                  allOf:
+                                      - $ref: '#/components/schemas/WoProductFaultSchema'
+                                      - type: object
+                                        properties:
+                                            faultCode:
+                                                type: string
+                                                example: 'F123'
 
         WoListResponseSchema:
             type: object
             properties:
-                resultsCount:
+                totalCount:
                     type: integer
-                    description: The current page
-                    example: 1
+                    description: The total number of results, ignoring the page size
+                    example: 100
                 pageCount:
                     type: integer
                     description: The total number of pages
@@ -4765,16 +5187,33 @@ components:
                           example: '2021-04-10T14:30:00+02:00'
                       updatedAt:
                           type: string
-                          description: ISO-8601 date - The date the Work Order was updated
+                          description: ISO-8601 date - The date the Work Order was last updated
+                          example: '2021-04-10T14:30:00+02:00'
+                      closedAt:
+                          type: string
+                          nullable: true
+                          description: ISO-8601 date - The date the Work Order was closed
                           example: '2021-04-10T14:30:00+02:00'
                       thirdpartyRef:
                           type: string
                           example: 'mythirdpartyref'
+                      programRef:
+                          type: string
+                          example: 'myprogramref'
+                      invoiceRef:
+                          type: string
+                          example: 'myinvoiceref'
+                      stockInboundRef:
+                          type: string
+                          example: 'mystockinboundref'
+                      stockOutboundRef:
+                          type: string
+                          example: 'mystockoutboundref'
                       priority:
                           type: string
                           example: 'High'
                       status:
-                          $ref: '#/components/schemas/StatusResponseSchema'
+                          $ref: '#/components/schemas/WoStatusInfoSchema'
                       contacts:
                           type: object
                           required:
@@ -4784,11 +5223,15 @@ components:
                               customer:
                                   $ref: '#/components/schemas/ContactResponseSchema'
                               delivery:
-                                  nullable: true
-                                  $ref: '#/components/schemas/ContactResponseSchema'
+                                  $ref: '#/components/schemas/SimpleContactResponseSchema'
                               location:
-                                  $ref: '#/components/schemas/ContactResponseSchema'
+                                  $ref: '#/components/schemas/SimpleContactResponseSchema'
+                              groupScheme:
+                                  description: Only present when the Work Order belongs to a Work Order Group
+                                  $ref: '#/components/schemas/SimpleContactResponseSchema'
                       product:
+                          nullable: true
+                          description: The product on the Work Order. `null` for install Work Orders.
                           $ref: '#/components/schemas/ProductResponseSchema'
                       installProducts:
                           type: array
