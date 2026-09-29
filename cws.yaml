@@ -66,7 +66,9 @@ tags:
     - name: Inventory Supplier Purchase Orders
       description: Pre-Alpha Preview 
     - name: Inventory Supplier Orders
-      description: Pre-Alpha Preview 
+      description: Pre-Alpha Preview
+    - name: Inventory Supplier Stock Reports
+      description: Pre-Alpha Preview
 
     
 paths:
@@ -2847,6 +2849,280 @@ paths:
                 '429':
                     $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
 
+    /inventory/suppliers/{supplierId}/in-stock:
+        get:
+            summary: Get the In Stock (Warehouse Stock) report
+            description: |
+                - Returns the Supplier's active Items that currently have a non-zero stock level, with their stock figures.
+                - Results are sorted by Item ident.
+                - Stock levels are served from a short-lived cache that is invalidated whenever stock changes, so figures may briefly lag a concurrent stock update.
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Stock Reports
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: query
+                  name: page
+                  description: The current page number. Default 1.
+                  schema:
+                    type: integer
+                    default: 1
+                - in: query
+                  name: pageSize
+                  description: The number of items to return Default 20 Max 200
+                  schema:
+                    type: integer
+                    default: 20
+                    maximum: 200
+                - in: query
+                  name: sort
+                  description: The sort direction (by Item ident)
+                  schema:
+                      type: string
+                      default: asc
+                      enum: [asc, desc]
+                - in: query
+                  name: categoryId
+                  description: The UID of an Item Category. Limits the results to that category and its child categories.
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: object
+                                        properties:
+                                            totalCount:
+                                                type: integer
+                                                description: The total number of results, ignoring the limit
+                                                example: 100
+                                            pageCount:
+                                                type: integer
+                                                description: The total number of pages
+                                                example: 5
+                                            pageSize:
+                                                type: integer
+                                                description: The size of each page
+                                                example: 20
+                                            page:
+                                                type: integer
+                                                description: The current page
+                                                example: 1
+                                            results:
+                                                type: array
+                                                items:
+                                                   $ref: '#/components/schemas/InventoryStockReportItemSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
+
+    /inventory/suppliers/{supplierId}/low-stock:
+        get:
+            summary: Get the Low Stock report
+            description: |
+                - Returns the Supplier's active Items whose stock level is below their minimum stock level.
+                - Results are sorted by Item ident.
+                - Stock levels are served from a short-lived cache that is invalidated whenever stock changes, so figures may briefly lag a concurrent stock update.
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Stock Reports
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: query
+                  name: page
+                  description: The current page number. Default 1.
+                  schema:
+                    type: integer
+                    default: 1
+                - in: query
+                  name: pageSize
+                  description: The number of items to return Default 20 Max 200
+                  schema:
+                    type: integer
+                    default: 20
+                    maximum: 200
+                - in: query
+                  name: sort
+                  description: The sort direction (by Item ident)
+                  schema:
+                      type: string
+                      default: asc
+                      enum: [asc, desc]
+                - in: query
+                  name: categoryId
+                  description: The UID of an Item Category. Limits the results to that category and its child categories.
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: object
+                                        properties:
+                                            totalCount:
+                                                type: integer
+                                                description: The total number of results, ignoring the limit
+                                                example: 100
+                                            pageCount:
+                                                type: integer
+                                                description: The total number of pages
+                                                example: 5
+                                            pageSize:
+                                                type: integer
+                                                description: The size of each page
+                                                example: 20
+                                            page:
+                                                type: integer
+                                                description: The current page
+                                                example: 1
+                                            results:
+                                                type: array
+                                                items:
+                                                   $ref: '#/components/schemas/InventoryStockReportItemSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
+
+    /inventory/suppliers/{supplierId}/stock-movements:
+        get:
+            summary: Get the Stock Movements report
+            description: |
+                - Returns the Supplier's stock ledger. Each entry is a single stock movement (positive or negative), with its related Inventory Order, Work Order and Product where applicable.
+                - Results are sorted by newest first by default.
+            security:
+              - Bearer: []
+            tags:
+                - Inventory Supplier Stock Reports
+            parameters:
+                - in: path
+                  name: supplierId
+                  required: true
+                  schema:
+                      type: string
+                  description: The UID of the Supplier
+                - in: query
+                  name: page
+                  description: The current page number. Default 1.
+                  schema:
+                    type: integer
+                    default: 1
+                - in: query
+                  name: pageSize
+                  description: The number of movements to return Default 20 Max 200
+                  schema:
+                    type: integer
+                    default: 20
+                    maximum: 200
+                - in: query
+                  name: sort
+                  description: The sort direction (by movement date)
+                  schema:
+                      type: string
+                      default: desc
+                      enum: [asc, desc]
+                - in: query
+                  name: movement
+                  description: Filter by movement type. `manual` returns movements without an Inventory Order, `orders` returns movements linked to an Inventory Order.
+                  schema:
+                      type: string
+                      default: all
+                      enum: [all, manual, orders]
+                - in: query
+                  name: createdFrom
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should start.
+                  example: "2022-04-10T14:30:00+02:00"
+                - in: query
+                  name: createdUntil
+                  schema:
+                      type: string
+                  description: ISO-8601 date - When the lookup should end.
+                  example: "2022-04-10T14:30:00+02:00"
+            responses:
+                '200':
+                    description: A successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    success:
+                                        type: boolean
+                                        description: Whether the request was successful
+                                        example: true
+                                    data:
+                                        type: object
+                                        properties:
+                                            totalCount:
+                                                type: integer
+                                                description: The total number of results, ignoring the limit
+                                                example: 100
+                                            pageCount:
+                                                type: integer
+                                                description: The total number of pages
+                                                example: 5
+                                            pageSize:
+                                                type: integer
+                                                description: The size of each page
+                                                example: 20
+                                            page:
+                                                type: integer
+                                                description: The current page
+                                                example: 1
+                                            results:
+                                                type: array
+                                                items:
+                                                   $ref: '#/components/schemas/InventoryStockMovementSchema'
+                '400':
+                    $ref: '#/components/responses/ResponseErrorBadRequest'
+                '405':
+                    $ref: '#/components/responses/ResponseMethodNotAllowed'
+                '401':
+                    $ref: '#/components/responses/ResponseErrorUnauthorized'
+                '429':
+                    $ref: '#/components/responses/ResponseErrorRateLimitExceeded'
+
 #----------------------------------------------------------------------------------------------------------------------- Components
 components:
     securitySchemes:
@@ -4214,7 +4490,119 @@ components:
                     description: The quantity of the item in stock
                     default: 0
                     example: 1
-        
+
+        InventoryStockReportItemSchema:
+            type: object
+            properties:
+                itemId:
+                    type: string
+                    description: The UID of the Item
+                ident:
+                    type: string
+                    description: The ident of the item
+                    example: 'PART-001'
+                factoryRef:
+                    type: string
+                    description: The factory ident of the item
+                thirdpartyRef:
+                    type: string
+                    description: The thirdparty ident of the item
+                descrip:
+                    type: string
+                    description: The description of the item
+                barcode:
+                    type: string
+                    description: The barcode of the item
+                stock:
+                    type: number
+                    description: The current stock level of the item
+                    example: 12
+                minStock:
+                    type: number
+                    description: The minimum stock level of the item
+                    example: 5
+                targetStock:
+                    type: number
+                    description: The target stock level of the item
+                    example: 20
+                category:
+                    type: string
+                    description: The item category name
+                productBrand:
+                    type: string
+                    description: The product brand name
+                models:
+                    type: array
+                    description: The product models linked to the item. Only returned by the in-stock report.
+                    items:
+                        type: string
+
+        InventoryStockMovementSchema:
+            type: object
+            properties:
+                movementId:
+                    type: string
+                    description: The UID of the stock movement
+                createdAt:
+                    type: string
+                    description: ISO-8601 date the movement was recorded
+                    example: "2022-04-10T14:30:00+02:00"
+                user:
+                    type: string
+                    description: The username that made the movement, or Unknown
+                note:
+                    type: string
+                    description: The note recorded against the movement
+                updateReason:
+                    type: string
+                    description: The reason recorded against the movement, or Unknown
+                qtyStock:
+                    type: number
+                    description: The stock quantity moved. Positive for additions, negative for deductions.
+                    example: -1
+                woRef:
+                    type: string
+                    description: The Work Order number the movement relates to, if any
+                itemId:
+                    type: string
+                    description: The UID of the Item
+                ident:
+                    type: string
+                    description: The ident of the item
+                factoryRef:
+                    type: string
+                    description: The factory ident of the item
+                thirdpartyRef:
+                    type: string
+                    description: The thirdparty ident of the item
+                descrip:
+                    type: string
+                    description: The description of the item
+                orderNumber:
+                    type: string
+                    description: The Inventory Order ident the movement relates to, if any
+                orderRecipient:
+                    type: string
+                    description: The recipient name of the related Inventory Order
+                orderDispatchedAt:
+                    type: string
+                    description: The dispatch date of the related Inventory Order
+                orderTracking:
+                    type: string
+                    description: The tracking ident of the related Inventory Order
+                orderSource:
+                    type: string
+                    description: The source of the related Inventory Order
+                productModel:
+                    type: string
+                    description: The product model on the related Work Order
+                productType:
+                    type: string
+                    description: The product type on the related Work Order
+                productSerial:
+                    type: string
+                    description: The product serial on the related Work Order
+
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Order Item
 
