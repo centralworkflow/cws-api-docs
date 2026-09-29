@@ -66,15 +66,15 @@ tags:
     - name: Work Order Groups Faults
       description: Work Order Group Faults operations.
     - name: Inventory
-      description: Pre-Alpha Preview
+      description: Inventory operations. Suppliers, factories and warehouses.
     - name: Inventory Supplier Items
-      description: Pre-Alpha Preview 
+      description: Inventory Supplier Item operations. Items are the parts and products a Supplier stocks.
     - name: Inventory Supplier Purchase Orders
-      description: Pre-Alpha Preview 
+      description: Inventory Supplier Purchase Order operations. Purchase Orders replenish a Supplier's stock.
     - name: Inventory Supplier Orders
-      description: Pre-Alpha Preview
+      description: Inventory Supplier Order operations. Orders dispatch stock from a Supplier.
     - name: Inventory Supplier Stock Reports
-      description: Pre-Alpha Preview
+      description: Inventory Supplier Stock Report operations. Current stock levels, low stock and the stock movement ledger.
 
     
 paths:
@@ -159,7 +159,7 @@ paths:
             tags:
                 - User
             security:
-                - Bearer: []
+                - bearerAuth: []
             responses:
                 '200':
                     description: A successful operation
@@ -214,7 +214,7 @@ paths:
             tags:
                 - User
             security:
-                - Bearer: []
+                - bearerAuth: []
             responses:
                 '200':
                     description: A successful operation
@@ -249,7 +249,7 @@ paths:
                 - Work Orders
 
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
 
                 - in: query
@@ -278,25 +278,25 @@ paths:
                   name: updatedFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: updatedUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 
                 - in: query
@@ -332,7 +332,7 @@ paths:
             tags:
                 - Work Orders
             security:
-                - Bearer: []
+                - bearerAuth: []
             responses:
                 '200':
                     $ref: '#/components/responses/ResponseWoStatsSuccess'
@@ -350,7 +350,7 @@ paths:
             tags:
                 - Work Orders
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -374,7 +374,7 @@ paths:
             tags:
                 - Work Orders
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -408,7 +408,7 @@ paths:
             tags:
                 - Work Order Statuses
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -448,7 +448,7 @@ paths:
             tags:
                 - Work Order Statuses
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -497,7 +497,7 @@ paths:
             tags:
                 - Work Order Logs
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -535,7 +535,7 @@ paths:
             tags:
                 - Work Order Logs
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -568,7 +568,7 @@ paths:
             tags:
                 - Work Order Logs
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -609,7 +609,7 @@ paths:
             tags:
                 - Work Order Logs
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -641,7 +641,7 @@ paths:
             tags:
                 - Work Order Parts
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -678,7 +678,7 @@ paths:
             tags:
                 - Work Order Parts
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -721,7 +721,7 @@ paths:
             tags:
                 - Work Order Parts
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -763,7 +763,7 @@ paths:
             tags:
                 - Work Order Parts
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -795,7 +795,7 @@ paths:
             tags:
                 - Work Order Charges
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -832,7 +832,7 @@ paths:
             tags:
                 - Work Order Charges
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -875,7 +875,7 @@ paths:
             tags:
                 - Work Order Charges
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -916,7 +916,7 @@ paths:
             tags:
                 - Work Order Charges
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: woId
@@ -950,7 +950,7 @@ paths:
             tags:
                 - Work Order Groups
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -969,25 +969,25 @@ paths:
                   name: updatedFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: updatedUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
             responses:
                 '200':
@@ -1006,7 +1006,7 @@ paths:
             tags:
                 - Work Order Groups
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1051,7 +1051,7 @@ paths:
             tags:
                 - Work Order Groups
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1093,7 +1093,7 @@ paths:
             tags:
                 - Work Order Groups
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1136,7 +1136,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1179,7 +1179,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1233,7 +1233,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1289,7 +1289,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1332,7 +1332,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1386,7 +1386,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1442,7 +1442,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1484,7 +1484,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             requestBody:
                 required: true
                 content:
@@ -1554,7 +1554,7 @@ paths:
             tags:
                 - Work Order Group Products
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1610,7 +1610,7 @@ paths:
             tags:
                 - Work Order Groups Faults
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1648,7 +1648,7 @@ paths:
             tags:
                 - Work Order Groups Faults
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1704,7 +1704,7 @@ paths:
             tags:
                 - Work Order Groups Faults
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1742,7 +1742,7 @@ paths:
             tags:
                 - Work Order Groups Faults
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1793,7 +1793,7 @@ paths:
                 - Other
             summary: Create a new Work Order using alt payload 1
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -1895,7 +1895,7 @@ paths:
                 - Other
             summary: Create a new Work Order using alt payload 2
             security:
-                - Bearer: []
+                - bearerAuth: []
             parameters:
                 - in: path
                   name: groupId
@@ -2037,7 +2037,7 @@ paths:
         get:
             summary: Get a list of all Suppliers
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory
             responses:
@@ -2069,7 +2069,7 @@ paths:
         get:
             summary: Get a list of all Factories
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory
             responses:
@@ -2101,7 +2101,7 @@ paths:
         get:
             summary: Get a list of all Warehouses
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory
             responses:
@@ -2138,7 +2138,7 @@ paths:
                 items: if the items are supplied they will be created if they do not exist.
             x-beta: true
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
@@ -2168,7 +2168,7 @@ paths:
         get:
             summary: Get a list of all Purchase Orders
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
@@ -2205,25 +2205,25 @@ paths:
                   name: updatedFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: updatedUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 
                 - in: query
@@ -2282,7 +2282,7 @@ paths:
         patch:
             summary: Update a Purchase Order
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
@@ -2320,7 +2320,7 @@ paths:
         get:
             summary: Get a Purchase Order
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
@@ -2352,7 +2352,7 @@ paths:
         patch:
             summary: Update a Purchase Order Item
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Purchase Orders
             parameters:
@@ -2404,7 +2404,7 @@ paths:
             description: |
                 items: if the items are supplied they will be created. If they do not exist they will be created. 
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Orders
             parameters:
@@ -2434,7 +2434,7 @@ paths:
         get:
             summary: Get a list of all Orders
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Orders
             parameters:
@@ -2471,25 +2471,25 @@ paths:
                   name: updatedFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: updatedUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: status
@@ -2545,7 +2545,7 @@ paths:
         patch:
             summary: Update an Order
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Orders
             parameters:
@@ -2581,7 +2581,7 @@ paths:
         get:
             summary: Get an Order
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Orders
             responses:
@@ -2601,7 +2601,7 @@ paths:
         patch:
             summary: Update an Order Item
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Orders
             parameters:
@@ -2650,7 +2650,7 @@ paths:
         post:
             summary: Create a new Item
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Items
             parameters:
@@ -2681,7 +2681,7 @@ paths:
         get:
             summary: Get a list of all Items
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Items
             parameters:
@@ -2717,25 +2717,25 @@ paths:
                   name: updatedFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: updatedUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 
             responses:
@@ -2787,7 +2787,7 @@ paths:
         patch:
             summary: Update an Item
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Items
             parameters:
@@ -2825,7 +2825,7 @@ paths:
         get:
             summary: Get an Item
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Items
             parameters:
@@ -2861,9 +2861,8 @@ paths:
             description: |
                 - Returns the Supplier's active Items that currently have a non-zero stock level, with their stock figures.
                 - Results are sorted by Item ident.
-                - Stock levels are served from a short-lived cache that is invalidated whenever stock changes, so figures may briefly lag a concurrent stock update.
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Stock Reports
             parameters:
@@ -2948,9 +2947,8 @@ paths:
             description: |
                 - Returns the Supplier's active Items whose stock level is below their minimum stock level.
                 - Results are sorted by Item ident.
-                - Stock levels are served from a short-lived cache that is invalidated whenever stock changes, so figures may briefly lag a concurrent stock update.
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Stock Reports
             parameters:
@@ -3036,7 +3034,7 @@ paths:
                 - Returns the Supplier's stock ledger. Each entry is a single stock movement (positive or negative), with its related Inventory Order, Work Order and Product where applicable.
                 - Results are sorted by newest first by default.
             security:
-              - Bearer: []
+              - bearerAuth: []
             tags:
                 - Inventory Supplier Stock Reports
             parameters:
@@ -3077,13 +3075,13 @@ paths:
                   name: createdFrom
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should start.
+                  description: ISO-8601 date - When the lookup should start (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
                 - in: query
                   name: createdUntil
                   schema:
                       type: string
-                  description: ISO-8601 date - When the lookup should end.
+                  description: ISO-8601 date - When the lookup should end (inclusive).
                   example: "2022-04-10T14:30:00+02:00"
             responses:
                 '200':
@@ -3136,7 +3134,7 @@ components:
             description: '
                 Bearer token to be obtained from the /auth or /auth/refresh endpoints.
                 Should be sent in all subsequent requests in the Authorization header.
-                Provide the token with the format `Bearer: token`'
+                Provide the token with the format `Bearer token`'
             type: http
             scheme: bearer
             bearerFormat: JWT
