@@ -5,8 +5,8 @@
     "title": "CWS API Documentation",
     "description": "This is the documentation for the CWS REST API.\n",
     "contact": {
-      "name": "Link Technology",
-      "email": "systems@linktechnology.net"
+      "name": "Central Workflow",
+      "email": "support@centralworkflow.com"
     }
   },
   "servers": [

@@ -5,6 +5,33 @@ info:
     description: |
         This is the documentation for the CWS REST API.
 
+        ## Authentication
+
+        All endpoints except `POST /auth`, `POST /auth/all` and
+        `POST /auth/refresh` require a Bearer token in the `Authorization`
+        header:
+
+        ```
+        Authorization: Bearer <accessToken>
+        ```
+
+        To obtain a token, call `POST /auth` with your Username and Password
+        (or `POST /auth/all` to also receive the user's details and
+        permissions in the same call). The response contains:
+
+        | Token | Validity | Purpose |
+        |-------|----------|---------|
+        | `accessToken` | 1 day | Sent as the Bearer token on every request |
+        | `refreshToken` | 90 days | Used with `POST /auth/refresh` to obtain a new Access Token without re-sending credentials |
+
+        Only one Access Token can be requested each 10 minutes, so store the
+        tokens rather than authenticating per request. When the Access Token
+        expires, use `POST /auth/refresh` to get a new one; an Access Token
+        can be refreshed this way for up to 90 days.
+
+        You can also authenticate the examples on this page via the
+        **Authorize** button below.
+
         ## Rate Limiting
 
         The API is rate limited to **60 requests per minute** and
@@ -36,8 +63,8 @@ info:
         rate just under the limits is always safe; avoid bursting and back off
         when a `Remaining` header approaches zero.
     contact:
-        name: Link Technology
-        email: systems@linktechnology.net
+        name: Central Workflow
+        email: support@centralworkflow.com
 
 servers:
     - url: https://{systemId}.cws.app/api/v1/
