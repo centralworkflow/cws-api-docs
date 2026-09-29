@@ -7,28 +7,34 @@ info:
 
         ## Rate Limiting
 
-        The API is rate limited to **100 requests per minute**.
+        The API is rate limited to **60 requests per minute** and
+        **1000 requests per hour**.
 
-        The limit is applied per API user, so your requests are not affected by
-        other integrations. Endpoints that do not require authentication are
+        Both limits are applied per API user, so your requests are not affected
+        by other integrations. Endpoints that do not require authentication are
         limited per IP address instead.
 
-        The limit uses a sliding 60 second window rather than fixed clock
-        minutes, so allowance frees up continuously as older requests age out.
-        Requests rejected for exceeding the limit do not consume quota.
+        Each limit uses a sliding window rather than fixed clock minutes or
+        hours, so allowance frees up continuously as older requests age out.
+        Requests rejected for exceeding a limit do not consume quota in either
+        window.
 
         Every response includes the following headers so you can track usage:
 
         | Header | Meaning |
         |--------|---------|
         | `X-RateLimit-Limit` | Total allowance (requests per minute) |
-        | `X-RateLimit-Remaining` | Requests remaining in the current window |
-        | `X-RateLimit-Reset` | Unix timestamp when allowance starts to free up |
+        | `X-RateLimit-Remaining` | Requests remaining in the current minute window |
+        | `X-RateLimit-Reset` | Unix timestamp when minute allowance starts to free up |
+        | `X-RateLimit-Limit-Hour` | Total allowance (requests per hour) |
+        | `X-RateLimit-Remaining-Hour` | Requests remaining in the current hour window |
+        | `X-RateLimit-Reset-Hour` | Unix timestamp when hour allowance starts to free up |
 
-        When the limit is exceeded the API responds with HTTP **429 Too Many
+        When either limit is exceeded the API responds with HTTP **429 Too Many
         Requests** and a `Retry-After` header giving the number of seconds to
-        wait before retrying. A steady rate just under the limit is always safe;
-        avoid bursting and back off when `X-RateLimit-Remaining` approaches zero.
+        wait before retrying (based on whichever window was exceeded). A steady
+        rate just under the limits is always safe; avoid bursting and back off
+        when a `Remaining` header approaches zero.
     contact:
         name: Link Technology
         email: systems@linktechnology.net
@@ -3296,26 +3302,43 @@ components:
 
         ResponseErrorRateLimitExceeded:
             description: |
-                Too many requests. The API is limited to 100 requests per minute per
-                user (per IP for unauthenticated endpoints) over a sliding 60 second
-                window. Rejected requests do not consume quota. Wait the number of
-                seconds given in the Retry-After header before retrying.
+                Too many requests. The API is limited to 60 requests per minute and
+                1000 requests per hour per user (per IP for unauthenticated
+                endpoints), each over its own sliding window. Rejected requests do
+                not consume quota. Wait the number of seconds given in the
+                Retry-After header before retrying - it reflects whichever window
+                was exceeded.
             headers:
                 X-RateLimit-Limit:
                     description: Total request allowance per minute
                     schema:
                         type: integer
-                        example: 100
+                        example: 60
                 X-RateLimit-Remaining:
-                    description: Requests remaining in the current window
+                    description: Requests remaining in the current minute window
                     schema:
                         type: integer
                         example: 0
                 X-RateLimit-Reset:
-                    description: Unix timestamp when allowance starts to free up
+                    description: Unix timestamp when minute allowance starts to free up
                     schema:
                         type: integer
                         example: 1758868800
+                X-RateLimit-Limit-Hour:
+                    description: Total request allowance per hour
+                    schema:
+                        type: integer
+                        example: 1000
+                X-RateLimit-Remaining-Hour:
+                    description: Requests remaining in the current hour window
+                    schema:
+                        type: integer
+                        example: 0
+                X-RateLimit-Reset-Hour:
+                    description: Unix timestamp when hour allowance starts to free up
+                    schema:
+                        type: integer
+                        example: 1758870000
                 Retry-After:
                     description: Seconds to wait before retrying
                     schema:
