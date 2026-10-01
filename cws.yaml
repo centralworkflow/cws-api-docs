@@ -3642,9 +3642,9 @@ components:
                     description: The description of the charge
                     example: 'My Description'
                 chargeQuantity:
-                    type: integer
-                    description: The quantity of the charge. Default 1.
-                    example: 1
+                    type: number
+                    description: The quantity of the charge. Decimals allowed (e.g. hours). Default 1.
+                    example: 1.5
                 chargeUnitPrice:
                     type: number
                     description: The unit price of the charge. Default 0.
@@ -3687,9 +3687,9 @@ components:
                     description: The description of the charge
                     example: 'My Description'
                 chargeQuantity:
-                    type: integer
+                    type: number
                     description: The quantity of the charge
-                    example: 1
+                    example: 1.5
                 chargeUnitPrice:
                     type: number
                     description: The unit price of the charge
@@ -3989,8 +3989,8 @@ components:
                     description: The description of the part
                     example: 'My Description'
                 partQuantity:
-                    type: integer
-                    description: The quantity of the item
+                    type: number
+                    description: The quantity of the item. Decimals allowed.
                     example: 1
                 partRrp:
                     type: number
