@@ -546,6 +546,7 @@ paths:
                                         - Cancelled
                                         - Invoiced
                                         - Estimate
+                                        - On Hold
             responses:
                 '200':
                     description: A successful operation
@@ -4353,6 +4354,7 @@ components:
                         - Cancelled
                         - Invoiced
                         - Estimate
+                        - On Hold
 
         StatusResponseSchema:
             type: object
@@ -4378,6 +4380,7 @@ components:
                         - Cancelled
                         - Invoiced
                         - Estimate
+                        - On Hold
 
         WoAvailableStatusSchema:
             type: object
@@ -4417,6 +4420,7 @@ components:
                         - Cancelled
                         - Invoiced
                         - Estimate
+                        - On Hold
 
         #----------------------------------------------------------------------------------------------------------------------- Inventory Purchase Order
 
