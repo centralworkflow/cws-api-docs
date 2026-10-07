@@ -4899,6 +4899,26 @@ components:
                     description: The quantity of the item in stock or to be added to stock
                     default: 0
                     example: 1
+                storageZone:
+                    type: string
+                    maxLength: 45
+                    description: Storage location level 1 (Zone)
+                    example: "BOX 121"
+                storageAisle:
+                    type: string
+                    maxLength: 45
+                    description: Storage location level 2 (Aisle)
+                    example: "A3"
+                storageLevel:
+                    type: string
+                    maxLength: 45
+                    description: Storage location level 3 (Level)
+                    example: "2"
+                storageSection:
+                    type: string
+                    maxLength: 45
+                    description: Storage location level 4 (Section)
+                    example: "S9"
 
         InventoryItemGetSchema:
             type: object
@@ -4929,7 +4949,27 @@ components:
                     type: number
                     description: The current stock quantity of the item
                     example: 1
-        
+                storageZone:
+                    type: string
+                    description: Storage location level 1 (Zone)
+                    example: "BOX 121"
+                storageAisle:
+                    type: string
+                    description: Storage location level 2 (Aisle)
+                    example: "A3"
+                storageLevel:
+                    type: string
+                    description: Storage location level 3 (Level)
+                    example: "2"
+                storageSection:
+                    type: string
+                    description: Storage location level 4 (Section)
+                    example: "S9"
+                storageLocation:
+                    type: string
+                    description: The populated storage levels joined with "/" - read only
+                    example: "BOX 121/A3/2/S9"
+
         InventoryItemPatchSchema:
             type: object
             properties:
@@ -4950,6 +4990,30 @@ components:
                     description: The quantity of the item in stock
                     default: 0
                     example: 1
+                storageZone:
+                    type: string
+                    nullable: true
+                    maxLength: 45
+                    description: Storage location level 1 (Zone). Send null or "" to clear.
+                    example: "BOX 121"
+                storageAisle:
+                    type: string
+                    nullable: true
+                    maxLength: 45
+                    description: Storage location level 2 (Aisle). Send null or "" to clear.
+                    example: "A3"
+                storageLevel:
+                    type: string
+                    nullable: true
+                    maxLength: 45
+                    description: Storage location level 3 (Level). Send null or "" to clear.
+                    example: "2"
+                storageSection:
+                    type: string
+                    nullable: true
+                    maxLength: 45
+                    description: Storage location level 4 (Section). Send null or "" to clear.
+                    example: "S9"
 
         InventoryStockReportItemSchema:
             type: object
@@ -4996,6 +5060,26 @@ components:
                     description: The product models linked to the item. Only returned by the in-stock report.
                     items:
                         type: string
+                storageZone:
+                    type: string
+                    description: Storage location level 1 (Zone)
+                    example: "BOX 121"
+                storageAisle:
+                    type: string
+                    description: Storage location level 2 (Aisle)
+                    example: "A3"
+                storageLevel:
+                    type: string
+                    description: Storage location level 3 (Level)
+                    example: "2"
+                storageSection:
+                    type: string
+                    description: Storage location level 4 (Section)
+                    example: "S9"
+                storageLocation:
+                    type: string
+                    description: The populated storage levels joined with "/"
+                    example: "BOX 121/A3/2/S9"
 
         InventoryStockMovementSchema:
             type: object
